@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>PRML.Ch10读书笔记：变分推理 - Limeng&#39;s Github Pages</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+		<meta property="og:title" content="PRML.Ch10读书笔记：变分推理" />
+<meta property="og:description" content="0 疑问 这类概率推理问题在没有VB方法的时候都是怎么求解的？
+ VB的直接好处是什么？ 什么是平均场估计？ 这里的估计方法和概率图中的BP的具体关系？ VB中每一步的模型都是设定好的吗？例如LDA中使用Dirichlet作为后验概率？ LDA中的VB是如何推导的？  1 引子 本文是PRML第10章部分内容的摘录和总结。在很多概率问题中，如果使用精确求解，那么问题规模与随机变量的个数是指数上升的。以主题模型LDA为例，每个词的生成对应一个随机变量，使用确定性的方法会导致问题规模为\(K^{NM}\)。现有的估计方法包括变分推导、随机模拟/采样、MCMC方法。其中变分推理是一个实现框架，具体而言有Loopy belief propagation方法和Mean field approximation方法。为了简单，以下VB即是说变分推理。
+用最简单的话来讲，VB是说数据集中很多特性经过简单统计能反映原始参数的多少，每次迭代我们首先在E步对这些特性进行统计（实际上是求解充分统计量），之后，在M步看在这些统计结果的限制内，参数最可能是多少。这些特性可能是一些计数结果等，例如在LDA模型中，可能是属于不同主题的词的个数等等。有意思的是，在这个角度上VB方法与采样方法有着很大的相似点，唯一不同的是，VB方法每次迭代有明确的前进方向，而采样是靠数量取胜，从这里也能看出VB和采样的优势分别是速度和精度。
+2 核心思想 变分推理的最终目的是要找到一个形式简单的分布Q，使得其能较好地估计形式复杂的真实分布P的取值。当我们指定一个Q之后，可以列出Q与P的关系： $$\ln{p(\bf{X})}=\mathcal{L}(q)&#43;KL(q||p)\tag{1}$$ 其中， $$\mathcal{L}(q)=\int{q(Z)\ln{\frac{p(X,Z)}{q(Z)}}dZ}$$ $$KL(q||p)=-\int{q(Z)\ln{\frac{p{(Z|X)}}{q(Z)}}dZ}$$
+这里我们使用KL散度描述P与Q的近似程度。KL散度是似然比的对数期望，它也是确定q之后p的混乱程度。另外，由于因为q与p不同分布时\(KL(p\vert\vert q) \neq KL(q\vert\vert p)\)，所以我们实际上面临\(KL(q\vert\vert p)\)和\(KL(p\vert\vert q)\)两个选择，实际情况是前者更为合理。如果我们能获得\(Z\)的解析形式的关系，那么参照EM方法中迭代求解隐变量的思路，即可求解隐变量的随机分布。VB与EM的最大区别在于VB中不再出现模型参数，取而代之的是随机变量。
+2.1 为何使用\(KL(q\vert\vert p)\) \(KL(q\vert\vert p)\)更倾向于使\(q\)去精确拟合\(p\)概率密度为0时的位置，这就导致对于分离的概率密度函数，\(q\)会产生一种聚集效果，即像后两个图一样拟合其中一个分离的分布，而不是像(a)一样试图拟合非0位置，这种行为叫做model-seeking。
+2.2 分布Q的合理形式 这种合理形式叫做可分解分布，满足： $$q(Z)=\prod_{i=1}^{M} q_i(Z_i)$$
+使用这种假设的好处是可将原始分布分解为多个较低维度的成分，可简化计算，这种方法在统计物理中被称为平均场方法。回顾公式(1)，我们的VB的最终目标是求一个Q，使得Q与P的KL距离最小，这等价于\(\mathcal{L}(q)\)的最大化。事实上，由(1)式可直接获得如下关系： $$\mathcal{L}(q)=\int{\ln{p(X,Z)}-\sum_{i}{\ln{q_i}}}\prod_{i}{q_i(x_i)}dZ$$ $$=\int q_{j}\ln{\tilde{p}(X,Z_j)dZ_j}-\int{q_j\ln q_j}dZ_j&#43;\text{const}$$ 以上公式是为了获得\(q_j\)和其他\(q\)的关系，以析解得目标(1)的最优解。推导过程中注意积分变量和提出被积变量中的常量。回顾公式(1)，我们令KL散度直接为0使\(\mathcal{L}(q)=\ln(p)\)，可得以下公式：
+$$\ln{q^\star_{j_{(\bf{Z_j})}}}=\mathbb{E}_{i\neq{j}}\ln{p(\bf{X},\bf{Z})}]&#43;\text{const}\tag{2}$$
+结论就是：为了估计随机变量\(q_j\)的分布，需要对其他所有随机变量的求期望，这样就极小化了KL散度，即使得Q与P更为接近。
+3 实例 VB方法具有一个统一的推导求解框架，但对于不同的模型往往会有不同的insight，PRML中也从不同的方向进行了求解。
+3.1 二元高斯模型 （待补充）
+3.2 混合高斯模型 首先将GMM模型进行贝叶斯化，GMM的生成模型如下：
+$$\alpha_0 \rightarrow \pi \rightarrow Z \rightarrow X \leftarrow \mu,\Lambda$$
+其中，\(X\)为观测变量，大小为1xN；Z为每个观测变量在不同类别中的归属，使用01表示，大小为是KxN；\(\pi\)为不同类别的权重，大小为1xK；\(\alpha_0\)为决定\(\pi\)形态的超参数，大小为1xK；\(\mu\)和\(\Lambda\)本身为每个正态分量的均值和方差参数。其中，变量间的关系如下： $$p(X|Z,\mu,\Lambda)=\prod_{n=1}^N\prod_{k=1}^K\mathcal{N}(x_n|\mu_k,\Lambda_k^{-1})^{z_{nk}}$$ $$p(Z|\pi) = \prod_{n=1}^{N}\prod_{k=1}^K\pi_{k}^{z_{nk}}$$ $$p(\pi)=\text{Dir}(\pi|\alpha_0)=C(\alpha_0)\prod_{k=1}^K{\pi_k^{\alpha_0-1}}$$ $$p(\mu,\Lambda)=\prod_{k=1}^{K}{\mathcal{N}(\mu_k|m_0,(\beta_0\Lambda_kk)^{-1})\mathcal{W}(\Lambda_k|W_0,v_0)}$$" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/20160815/prml-ch10-vi/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2016-08-12T00:00:00+00:00" />
+<meta property="article:modified_time" content="2016-08-12T00:00:00+00:00" />
+
+
+		<meta itemprop="name" content="PRML.Ch10读书笔记：变分推理">
+<meta itemprop="description" content="0 疑问 这类概率推理问题在没有VB方法的时候都是怎么求解的？
+ VB的直接好处是什么？ 什么是平均场估计？ 这里的估计方法和概率图中的BP的具体关系？ VB中每一步的模型都是设定好的吗？例如LDA中使用Dirichlet作为后验概率？ LDA中的VB是如何推导的？  1 引子 本文是PRML第10章部分内容的摘录和总结。在很多概率问题中，如果使用精确求解，那么问题规模与随机变量的个数是指数上升的。以主题模型LDA为例，每个词的生成对应一个随机变量，使用确定性的方法会导致问题规模为\(K^{NM}\)。现有的估计方法包括变分推导、随机模拟/采样、MCMC方法。其中变分推理是一个实现框架，具体而言有Loopy belief propagation方法和Mean field approximation方法。为了简单，以下VB即是说变分推理。
+用最简单的话来讲，VB是说数据集中很多特性经过简单统计能反映原始参数的多少，每次迭代我们首先在E步对这些特性进行统计（实际上是求解充分统计量），之后，在M步看在这些统计结果的限制内，参数最可能是多少。这些特性可能是一些计数结果等，例如在LDA模型中，可能是属于不同主题的词的个数等等。有意思的是，在这个角度上VB方法与采样方法有着很大的相似点，唯一不同的是，VB方法每次迭代有明确的前进方向，而采样是靠数量取胜，从这里也能看出VB和采样的优势分别是速度和精度。
+2 核心思想 变分推理的最终目的是要找到一个形式简单的分布Q，使得其能较好地估计形式复杂的真实分布P的取值。当我们指定一个Q之后，可以列出Q与P的关系： $$\ln{p(\bf{X})}=\mathcal{L}(q)&#43;KL(q||p)\tag{1}$$ 其中， $$\mathcal{L}(q)=\int{q(Z)\ln{\frac{p(X,Z)}{q(Z)}}dZ}$$ $$KL(q||p)=-\int{q(Z)\ln{\frac{p{(Z|X)}}{q(Z)}}dZ}$$
+这里我们使用KL散度描述P与Q的近似程度。KL散度是似然比的对数期望，它也是确定q之后p的混乱程度。另外，由于因为q与p不同分布时\(KL(p\vert\vert q) \neq KL(q\vert\vert p)\)，所以我们实际上面临\(KL(q\vert\vert p)\)和\(KL(p\vert\vert q)\)两个选择，实际情况是前者更为合理。如果我们能获得\(Z\)的解析形式的关系，那么参照EM方法中迭代求解隐变量的思路，即可求解隐变量的随机分布。VB与EM的最大区别在于VB中不再出现模型参数，取而代之的是随机变量。
+2.1 为何使用\(KL(q\vert\vert p)\) \(KL(q\vert\vert p)\)更倾向于使\(q\)去精确拟合\(p\)概率密度为0时的位置，这就导致对于分离的概率密度函数，\(q\)会产生一种聚集效果，即像后两个图一样拟合其中一个分离的分布，而不是像(a)一样试图拟合非0位置，这种行为叫做model-seeking。
+2.2 分布Q的合理形式 这种合理形式叫做可分解分布，满足： $$q(Z)=\prod_{i=1}^{M} q_i(Z_i)$$
+使用这种假设的好处是可将原始分布分解为多个较低维度的成分，可简化计算，这种方法在统计物理中被称为平均场方法。回顾公式(1)，我们的VB的最终目标是求一个Q，使得Q与P的KL距离最小，这等价于\(\mathcal{L}(q)\)的最大化。事实上，由(1)式可直接获得如下关系： $$\mathcal{L}(q)=\int{\ln{p(X,Z)}-\sum_{i}{\ln{q_i}}}\prod_{i}{q_i(x_i)}dZ$$ $$=\int q_{j}\ln{\tilde{p}(X,Z_j)dZ_j}-\int{q_j\ln q_j}dZ_j&#43;\text{const}$$ 以上公式是为了获得\(q_j\)和其他\(q\)的关系，以析解得目标(1)的最优解。推导过程中注意积分变量和提出被积变量中的常量。回顾公式(1)，我们令KL散度直接为0使\(\mathcal{L}(q)=\ln(p)\)，可得以下公式：
+$$\ln{q^\star_{j_{(\bf{Z_j})}}}=\mathbb{E}_{i\neq{j}}\ln{p(\bf{X},\bf{Z})}]&#43;\text{const}\tag{2}$$
+结论就是：为了估计随机变量\(q_j\)的分布，需要对其他所有随机变量的求期望，这样就极小化了KL散度，即使得Q与P更为接近。
+3 实例 VB方法具有一个统一的推导求解框架，但对于不同的模型往往会有不同的insight，PRML中也从不同的方向进行了求解。
+3.1 二元高斯模型 （待补充）
+3.2 混合高斯模型 首先将GMM模型进行贝叶斯化，GMM的生成模型如下：
+$$\alpha_0 \rightarrow \pi \rightarrow Z \rightarrow X \leftarrow \mu,\Lambda$$
+其中，\(X\)为观测变量，大小为1xN；Z为每个观测变量在不同类别中的归属，使用01表示，大小为是KxN；\(\pi\)为不同类别的权重，大小为1xK；\(\alpha_0\)为决定\(\pi\)形态的超参数，大小为1xK；\(\mu\)和\(\Lambda\)本身为每个正态分量的均值和方差参数。其中，变量间的关系如下： $$p(X|Z,\mu,\Lambda)=\prod_{n=1}^N\prod_{k=1}^K\mathcal{N}(x_n|\mu_k,\Lambda_k^{-1})^{z_{nk}}$$ $$p(Z|\pi) = \prod_{n=1}^{N}\prod_{k=1}^K\pi_{k}^{z_{nk}}$$ $$p(\pi)=\text{Dir}(\pi|\alpha_0)=C(\alpha_0)\prod_{k=1}^K{\pi_k^{\alpha_0-1}}$$ $$p(\mu,\Lambda)=\prod_{k=1}^{K}{\mathcal{N}(\mu_k|m_0,(\beta_0\Lambda_kk)^{-1})\mathcal{W}(\Lambda_k|W_0,v_0)}$$"><meta itemprop="datePublished" content="2016-08-12T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2016-08-12T00:00:00+00:00" />
+<meta itemprop="wordCount" content="147">
+<meta itemprop="keywords" content="PRML,概率图,机器学习,读书笔记," />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+
+	<link rel="stylesheet" href="/css/style.css">
+	
+
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo">
+		<a class="logo__link" href="/" title="安全屋" rel="home">
+			<div class="logo__item logo__text">
+					<div class="logo__title">安全屋</div>
+					<div class="logo__tagline">又菜又爱玩</div>
+				</div>
+		</a>
+	</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">PRML.Ch10读书笔记：变分推理</h1>
+			<div class="post__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">李勐</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2016-08-12T00:00:00Z">2016-08-12</time></div><div class="meta__item-categories meta__item"><svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg><span class="meta__text"><a class="meta__link" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="category">读书笔记</a>
+	</span>
+</div></div>
+		</header>
+		
+<div class="post__toc toc">
+	<div class="toc__title">Page content</div>
+	<div class="toc__menu">
+		<nav id="TableOfContents">
+  <ul>
+    <li><a href="#0-疑问">0 疑问</a></li>
+    <li><a href="#1-引子">1 引子</a></li>
+    <li><a href="#2-核心思想">2 核心思想</a>
+      <ul>
+        <li><a href="#21-为何使用klqvertvert-p">2.1 为何使用\(KL(q\vert\vert p)\)</a></li>
+        <li><a href="#22-分布q的合理形式">2.2 分布Q的合理形式</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-实例">3 实例</a>
+      <ul>
+        <li><a href="#31-二元高斯模型">3.1 二元高斯模型</a></li>
+        <li><a href="#32-混合高斯模型">3.2 混合高斯模型</a></li>
+        <li><a href="#33-贝叶斯线性回归">3.3 贝叶斯线性回归</a></li>
+      </ul>
+    </li>
+    <li><a href="#4-参考文献">4 参考文献</a></li>
+  </ul>
+</nav>
+	</div>
+</div><div class="content post__content clearfix">
+			<h2 id="0-疑问">0 疑问</h2>
+<p>这类概率推理问题在没有VB方法的时候都是怎么求解的？</p>
+<ul>
+<li>VB的直接好处是什么？</li>
+<li>什么是平均场估计？</li>
+<li>这里的估计方法和概率图中的BP的具体关系？</li>
+<li>VB中每一步的模型都是设定好的吗？例如LDA中使用Dirichlet作为后验概率？</li>
+<li>LDA中的VB是如何推导的？</li>
+</ul>
+<h2 id="1-引子">1 引子</h2>
+<p>本文是PRML第10章部分内容的摘录和总结。在很多概率问题中，如果使用精确求解，那么问题规模与随机变量的个数是指数上升的。以主题模型LDA为例，每个词的生成对应一个随机变量，使用确定性的方法会导致问题规模为\(K^{NM}\)。现有的估计方法包括变分推导、随机模拟/采样、MCMC方法。其中变分推理是一个实现框架，具体而言有Loopy belief propagation方法和Mean field approximation方法。为了简单，以下VB即是说变分推理。</p>
+<p>用最简单的话来讲，VB是说数据集中很多特性经过简单统计能反映原始参数的多少，每次迭代我们首先在E步对这些特性进行统计（实际上是求解充分统计量），之后，在M步看在这些统计结果的限制内，参数最可能是多少。这些特性可能是一些计数结果等，例如在LDA模型中，可能是属于不同主题的词的个数等等。有意思的是，在这个角度上VB方法与采样方法有着很大的相似点，唯一不同的是，VB方法每次迭代有明确的前进方向，而采样是靠数量取胜，从这里也能看出VB和采样的优势分别是速度和精度。</p>
+<h2 id="2-核心思想">2 核心思想</h2>
+<p>变分推理的最终目的是要找到一个形式简单的分布Q，使得其能较好地估计形式复杂的真实分布P的取值。当我们指定一个Q之后，可以列出Q与P的关系：
+$$\ln{p(\bf{X})}=\mathcal{L}(q)+KL(q||p)\tag{1}$$
+其中，
+$$\mathcal{L}(q)=\int{q(Z)\ln{\frac{p(X,Z)}{q(Z)}}dZ}$$
+$$KL(q||p)=-\int{q(Z)\ln{\frac{p{(Z|X)}}{q(Z)}}dZ}$$</p>
+<p>这里我们使用KL散度描述P与Q的近似程度。KL散度是似然比的对数期望，它也是确定q之后p的混乱程度。另外，由于因为q与p不同分布时\(KL(p\vert\vert q) \neq KL(q\vert\vert p)\)，所以我们实际上面临\(KL(q\vert\vert p)\)和\(KL(p\vert\vert q)\)两个选择，实际情况是前者更为合理。如果我们能获得\(Z\)的解析形式的关系，那么参照EM方法中迭代求解隐变量的思路，即可求解隐变量的随机分布。VB与EM的最大区别在于VB中不再出现模型参数，取而代之的是随机变量。</p>
+<h3 id="21-为何使用klqvertvert-p">2.1 为何使用\(KL(q\vert\vert p)\)</h3>
+<p><img src="./../assets/vi.png" alt="KL"></p>
+<p>\(KL(q\vert\vert p)\)更倾向于使\(q\)去精确拟合\(p\)概率密度为0时的位置，这就导致对于分离的概率密度函数，\(q\)会产生一种聚集效果，即像后两个图一样拟合其中一个分离的分布，而不是像(a)一样试图拟合非0位置，这种行为叫做model-seeking。</p>
+<h3 id="22-分布q的合理形式">2.2 分布Q的合理形式</h3>
+<p>这种合理形式叫做可分解分布，满足：
+$$q(Z)=\prod_{i=1}^{M} q_i(Z_i)$$</p>
+<p>使用这种假设的好处是可将原始分布分解为多个较低维度的成分，可简化计算，这种方法在统计物理中被称为平均场方法。回顾公式(1)，我们的VB的最终目标是求一个Q，使得Q与P的KL距离最小，这等价于\(\mathcal{L}(q)\)的最大化。事实上，由(1)式可直接获得如下关系：
+$$\mathcal{L}(q)=\int{\ln{p(X,Z)}-\sum_{i}{\ln{q_i}}}\prod_{i}{q_i(x_i)}dZ$$
+$$=\int q_{j}\ln{\tilde{p}(X,Z_j)dZ_j}-\int{q_j\ln q_j}dZ_j+\text{const}$$
+以上公式是为了获得\(q_j\)和其他\(q\)的关系，以析解得目标(1)的最优解。推导过程中注意积分变量和提出被积变量中的常量。回顾公式(1)，我们令KL散度直接为0使\(\mathcal{L}(q)=\ln(p)\)，可得以下公式：</p>
+<p>$$\ln{q^\star_{j_{(\bf{Z_j})}}}=\mathbb{E}_{i\neq{j}}\ln{p(\bf{X},\bf{Z})}]+\text{const}\tag{2}$$</p>
+<p>结论就是：为了估计随机变量\(q_j\)的分布，需要对其他所有随机变量的求期望，这样就极小化了KL散度，即使得Q与P更为接近。</p>
+<h2 id="3-实例">3 实例</h2>
+<p>VB方法具有一个统一的推导求解框架，但对于不同的模型往往会有不同的insight，PRML中也从不同的方向进行了求解。</p>
+<h3 id="31-二元高斯模型">3.1 二元高斯模型</h3>
+<p>（待补充）</p>
+<h3 id="32-混合高斯模型">3.2 混合高斯模型</h3>
+<p>首先将GMM模型进行贝叶斯化，GMM的生成模型如下：</p>
+<p>$$\alpha_0 \rightarrow \pi \rightarrow Z \rightarrow X \leftarrow \mu,\Lambda$$</p>
+<p>其中，\(X\)为观测变量，大小为1xN；Z为每个观测变量在不同类别中的归属，使用01表示，大小为是KxN；\(\pi\)为不同类别的权重，大小为1xK；\(\alpha_0\)为决定\(\pi\)形态的超参数，大小为1xK；\(\mu\)和\(\Lambda\)本身为每个正态分量的均值和方差参数。其中，变量间的关系如下：
+$$p(X|Z,\mu,\Lambda)=\prod_{n=1}^N\prod_{k=1}^K\mathcal{N}(x_n|\mu_k,\Lambda_k^{-1})^{z_{nk}}$$
+$$p(Z|\pi) = \prod_{n=1}^{N}\prod_{k=1}^K\pi_{k}^{z_{nk}}$$
+$$p(\pi)=\text{Dir}(\pi|\alpha_0)=C(\alpha_0)\prod_{k=1}^K{\pi_k^{\alpha_0-1}}$$
+$$p(\mu,\Lambda)=\prod_{k=1}^{K}{\mathcal{N}(\mu_k|m_0,(\beta_0\Lambda_kk)^{-1})\mathcal{W}(\Lambda_k|W_0,v_0)}$$</p>
+<p>可以看出\(p(Z\vert\pi)\)是以\(\pi\)为参数的多项分布。\(p(\pi\vert\alpha_0)\)可使用Dirichlet分布进行描述，正态分布的参数可使用Gaussian-Wishart分布描述，因为他们分别是多项分布和高斯分布的先验共轭。</p>
+<p>最终目标实际上是估计以上关系构成的联合分布\(p(X,Z,\pi,\mu,\Lambda)\)。我们使用2.2节中提到的可分解分布\(q(Z)q(\pi,\mu,\Lambda)\)对\(p\)进行估计。一种直观的方式是分解整个联合概率分布，以构造分布Q，如下：
+$$\ln q^\star(Z)=\mathbb{E}_{\pi,\mu,\Lambda}[\ln{p(X,Z,\pi,\mu,\Lambda)}] + \text{const}\tag{3}$$</p>
+<p>将\(p\)的生成模型代入其中，直接将(3)展开，可得到一种分布分解的情况。
+$$\ln q^\star(Z)=\sum_{n=1}^N\sum_{k=1}^K z_{nk} \ln{r_{nk}}$$</p>
+<p>这里没有将\(r\)进行展开，其意义为Q函数中一个规范化后的\(q\)。观察到\(r\)的形式和我们想要的Q函数的形式一致，所以我们直接令\(\mathbb{E}[z_{nk}]= r_{nk}\)可得到VB的参数推导公式。但遗憾的是这种方法得到的结果与MLE是一致的，而事实证明MLE方法在对应GMM模型中有较为明显的缺陷，即从整个联合概率密度进行估计Q函数并不是一个好的方式。
+一个更合适的方式是尝试将\(\ln{q^\star}(\pi,\mu,\Lambda)\)进行分布的分解。E步使用期望估计Q函数的形式，待估计函数的展开形式仍然如(3)所示，该步骤可产生关键的模型参数\(r_{nk}\)：</p>
+<p>$$\mathbb{E}_{\mu_k,\Lambda_k}[(x_n-\mu_k)^T\Lambda_k(x_n-\mu_k)]=D\beta_k^{-1} + v_k(x_n-m_k)^TW_k(x_n-m_k)$$</p>
+<p>$$\ln{\tilde\Lambda_k}=\mathbb{E}[\ln|\Lambda_k|]=\sum_{i=1}^D\psi(\frac{v_k+1-i}{2})+D\ln 2 +\ln|W_k|$$</p>
+<p>$$\ln\tilde\pi_k=\mathbb{E}[\ln\pi_k]=\psi(\alpha_k)-\psi(\sum_k\alpha_k)$$</p>
+<p>以上公式带入(3)中可获得：
+$$r_{nk}\propto \tilde\pi_k\tilde\Lambda_k^{1/2}\exp{-\frac{D}{2\beta_k}-\frac{v_k}{2}(x_n-m_k)^T W_k(x_n-m_k)}$$</p>
+<p>M步更新原始模型，\(r_{nk}\)为计算原始模型的参数：
+$$q^\star(\pi)=\text{Dir}(\pi|\alpha)$$
+$$q^\star(\mu_k,\Lambda_k)=\mathcal{N}(\mu_k|m_k,(\beta_k\Lambda_k)^{-1})\mathcal{W}(\Lambda_k|W_k,v_k)$$</p>
+<p>其中，
+$$\beta_k=\beta_0+N_k$$
+$$m_k=\frac{1}{\beta_k}(\beta_0 m_0 + N_k \bar{x}_k)$$
+$$W_k^{-1}=W_0^{-1}+N_k S_k + \frac{\beta_0 N_k}{\beta_0+N_k}(\bar x_k - m_0)(\bar x_k - m_0)^T$$
+$$v_k = v_0 + N_k$$</p>
+<p>以上分布分解方法最终得到的Q函数计算结果与EM方法是一致的。</p>
+<h3 id="33-贝叶斯线性回归">3.3 贝叶斯线性回归</h3>
+<p>（待补充）</p>
+<h2 id="4-参考文献">4 参考文献</h2>
+<ul>
+<li><a href="http://www.blog.huajh7.com/variational-bayes/">中文博客huajh7, Variational Bayes</a></li>
+<li><a href="http://users.isr.ist.utl.pt/~wurmd/Livros/school/Bishop%20-%20Pattern%20Recognition%20And%20Machine%20Learning%20-%20Springer%20%202006.pdf">PRML读书会第十章</a></li>
+<li>C. Bishop, PRML Chapter10</li>
+<li><a href="https://www.cs.cmu.edu/~epxing/Class/10708-14/lecture.html">E. Xing, Probabilistic Graphical Models</a></li>
+<li><a href="http://www.cse.buffalo.edu/faculty/mbeal/thesis/">B. Matthew, PhD thesis</a></li>
+</ul>
+
+		</div>
+		<footer class="post__footer">
+			
+<div class="post__tags tags clearfix">
+	<svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5 0 11V3C0 1.5.8.8.8.8S1.5 0 3 0h8c1.5 0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/prml/" rel="tag">PRML</a>
+		</li>
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/%E6%A6%82%E7%8E%87%E5%9B%BE/" rel="tag">概率图</a>
+		</li>
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag">机器学习</a>
+		</li>
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag">读书笔记</a>
+		</li>
+	</ul>
+</div>
+		</footer>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<div class="authorbox__header">
+		<span class="authorbox__name">About 李勐</span>
+	</div>
+</div>
+
+<nav class="pager flex">
+	<div class="pager__item pager__item--prev">
+		<a class="pager__link" href="/posts/20160812/prml-ch9/" rel="prev">
+			<span class="pager__subtitle">«&thinsp;Previous</span>
+			<p class="pager__title">PRML.Ch9读书笔记：EM方法</p>
+		</a>
+	</div>
+	<div class="pager__item pager__item--next">
+		<a class="pager__link" href="/posts/20160818-lda/lda/" rel="next">
+			<span class="pager__subtitle">Next&thinsp;»</span>
+			<p class="pager__title">LDA模型入门</p>
+		</a>
+	</div>
+</nav>
+
+
+			</div>
+			
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2021 Limeng&#39;s Github Pages.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+</body>
+</html>

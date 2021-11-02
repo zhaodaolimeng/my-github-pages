@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>概率图 on Limeng&#39;s Github Pages</title>
+    <link>/tags/%E6%A6%82%E7%8E%87%E5%9B%BE/</link>
+    <description>Recent content in 概率图 on Limeng&#39;s Github Pages</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Thu, 18 Aug 2016 00:00:00 +0000</lastBuildDate><atom:link href="/tags/%E6%A6%82%E7%8E%87%E5%9B%BE/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LDA模型入门</title>
+      <link>/posts/20160818-lda/lda/</link>
+      <pubDate>Thu, 18 Aug 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/20160818-lda/lda/</guid>
+      <description>1 引子 本文是对Blei等人LDA原始论文的总结。给定大量的文档，如何在无标注的情况下确定每个文档的主题词？LDA(Latent Dirichlet Allocation)是这类主题确定问题的一个成熟的解决方案。LDA最初面向文本挖掘领域，但随后在图像分类、行为识别等领域也得到了应用。LDA是一种典型的非监督模型，模型仅需要输入文档集合的词袋模型，模型可输出每个文档对应的主题，每个主题使用关键词的分布来表示。
+2 模型定义 LDA的PGM形式如上，我们认为主题数目有K个，文档有M个， 每个文档中有N个词。其中，\(\alpha\) 是Dirichlet分布的参数，大小为1xK，用于控制生成主题的聚集程度； \(\theta\) 表示一个文档中主题的分布大小为1xK；\(z\)为一个为每个词安排主题的01随机变量，大小为1xK，且只有一个值为1；\(\beta\)为一个多项分布的集合，大小为KxV，其中每一行代表一个主题中，不同词出现的概率；而w代表每个文档中的一个词。
+沿着上面的PGM的箭头方向，可以总结出词的生成过程。我们已知了每个文档中的词袋模型\(w\)，为了找到一组合适的主题，需要对分布 \(p(w\vert\alpha,\beta)\) 进行推理。由于该分部中蕴含了隐变量主题\(\theta\) ，所以积分将\(\theta\)积掉。代入Dirichlet分布\(p(\theta\vert\alpha)\)，多项分布\(p(z_n\vert\theta)\)，以及一个单独的概率值\(p(w_n\vert z_n,\beta)\)，可得参数的后验概率形式。以下为完整的推导： $$p(w|\alpha,\beta) = \int p(\theta|\alpha)\prod_{n=1}^N p(w|\theta, \beta) d\theta$$ $$= \int p(\theta|\alpha) (\prod_{n=1}^N \sum_{z_n}p(z_n|\theta)p(w_n|z_n,\beta))$$ $$ = \frac{\Gamma(\sum_i\alpha_i)}{\prod_i{\Gamma(\alpha_i)}}\int(\prod_{i=1}^k\theta_i^{\alpha_i-1})(\prod_{n=1}^N\sum_{i=1}^k\prod_{j=1}^V(\theta_i\beta_{ij})^{w_n^j})d\theta$$
+模型的两个关键参数可以通过多种方法进行求解，即模型训练。
+3 模型训练 3.1 变分推理 Blei最初的LDA论文中，使用了变分推理（VB）求解LDA参数。这种方法试图使用一个不受约束的变分分布近似LDA的模型的联合概率。类似的手段可以参见Laplace近似，最经典的应用为使用高斯分布近似Bayesian Logistic Regression中观测的后验分布\(p(w\vert\bf{t})\)。VB个人理解为一种链式的迭代估计框架。使用一个Q函数去近似真实分布函数。
+3.2 Gibbs Sampling 优势是便于编程实现。
+3.3 比较 变分推理的计算快于基于采样的方法，但可能会收敛到局部最优解。Matthew、Blei等人对于LDA在线学习中对变分推理进行了改进。采样方法更为直观、易于工程实现，且在多数场景下，采样的最终性能会好于变分推理。
+4 参考文献 Blei, David. Latent Dirichlet Allocation</description>
+    </item>
+    
+    <item>
+      <title>PRML.Ch10读书笔记：变分推理</title>
+      <link>/posts/20160815/prml-ch10-vi/</link>
+      <pubDate>Fri, 12 Aug 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/20160815/prml-ch10-vi/</guid>
+      <description>0 疑问 这类概率推理问题在没有VB方法的时候都是怎么求解的？
+ VB的直接好处是什么？ 什么是平均场估计？ 这里的估计方法和概率图中的BP的具体关系？ VB中每一步的模型都是设定好的吗？例如LDA中使用Dirichlet作为后验概率？ LDA中的VB是如何推导的？  1 引子 本文是PRML第10章部分内容的摘录和总结。在很多概率问题中，如果使用精确求解，那么问题规模与随机变量的个数是指数上升的。以主题模型LDA为例，每个词的生成对应一个随机变量，使用确定性的方法会导致问题规模为\(K^{NM}\)。现有的估计方法包括变分推导、随机模拟/采样、MCMC方法。其中变分推理是一个实现框架，具体而言有Loopy belief propagation方法和Mean field approximation方法。为了简单，以下VB即是说变分推理。
+用最简单的话来讲，VB是说数据集中很多特性经过简单统计能反映原始参数的多少，每次迭代我们首先在E步对这些特性进行统计（实际上是求解充分统计量），之后，在M步看在这些统计结果的限制内，参数最可能是多少。这些特性可能是一些计数结果等，例如在LDA模型中，可能是属于不同主题的词的个数等等。有意思的是，在这个角度上VB方法与采样方法有着很大的相似点，唯一不同的是，VB方法每次迭代有明确的前进方向，而采样是靠数量取胜，从这里也能看出VB和采样的优势分别是速度和精度。
+2 核心思想 变分推理的最终目的是要找到一个形式简单的分布Q，使得其能较好地估计形式复杂的真实分布P的取值。当我们指定一个Q之后，可以列出Q与P的关系： $$\ln{p(\bf{X})}=\mathcal{L}(q)+KL(q||p)\tag{1}$$ 其中， $$\mathcal{L}(q)=\int{q(Z)\ln{\frac{p(X,Z)}{q(Z)}}dZ}$$ $$KL(q||p)=-\int{q(Z)\ln{\frac{p{(Z|X)}}{q(Z)}}dZ}$$
+这里我们使用KL散度描述P与Q的近似程度。KL散度是似然比的对数期望，它也是确定q之后p的混乱程度。另外，由于因为q与p不同分布时\(KL(p\vert\vert q) \neq KL(q\vert\vert p)\)，所以我们实际上面临\(KL(q\vert\vert p)\)和\(KL(p\vert\vert q)\)两个选择，实际情况是前者更为合理。如果我们能获得\(Z\)的解析形式的关系，那么参照EM方法中迭代求解隐变量的思路，即可求解隐变量的随机分布。VB与EM的最大区别在于VB中不再出现模型参数，取而代之的是随机变量。
+2.1 为何使用\(KL(q\vert\vert p)\) \(KL(q\vert\vert p)\)更倾向于使\(q\)去精确拟合\(p\)概率密度为0时的位置，这就导致对于分离的概率密度函数，\(q\)会产生一种聚集效果，即像后两个图一样拟合其中一个分离的分布，而不是像(a)一样试图拟合非0位置，这种行为叫做model-seeking。
+2.2 分布Q的合理形式 这种合理形式叫做可分解分布，满足： $$q(Z)=\prod_{i=1}^{M} q_i(Z_i)$$
+使用这种假设的好处是可将原始分布分解为多个较低维度的成分，可简化计算，这种方法在统计物理中被称为平均场方法。回顾公式(1)，我们的VB的最终目标是求一个Q，使得Q与P的KL距离最小，这等价于\(\mathcal{L}(q)\)的最大化。事实上，由(1)式可直接获得如下关系： $$\mathcal{L}(q)=\int{\ln{p(X,Z)}-\sum_{i}{\ln{q_i}}}\prod_{i}{q_i(x_i)}dZ$$ $$=\int q_{j}\ln{\tilde{p}(X,Z_j)dZ_j}-\int{q_j\ln q_j}dZ_j+\text{const}$$ 以上公式是为了获得\(q_j\)和其他\(q\)的关系，以析解得目标(1)的最优解。推导过程中注意积分变量和提出被积变量中的常量。回顾公式(1)，我们令KL散度直接为0使\(\mathcal{L}(q)=\ln(p)\)，可得以下公式：
+$$\ln{q^\star_{j_{(\bf{Z_j})}}}=\mathbb{E}_{i\neq{j}}\ln{p(\bf{X},\bf{Z})}]+\text{const}\tag{2}$$
+结论就是：为了估计随机变量\(q_j\)的分布，需要对其他所有随机变量的求期望，这样就极小化了KL散度，即使得Q与P更为接近。
+3 实例 VB方法具有一个统一的推导求解框架，但对于不同的模型往往会有不同的insight，PRML中也从不同的方向进行了求解。
+3.1 二元高斯模型 （待补充）
+3.2 混合高斯模型 首先将GMM模型进行贝叶斯化，GMM的生成模型如下：
+$$\alpha_0 \rightarrow \pi \rightarrow Z \rightarrow X \leftarrow \mu,\Lambda$$
+其中，\(X\)为观测变量，大小为1xN；Z为每个观测变量在不同类别中的归属，使用01表示，大小为是KxN；\(\pi\)为不同类别的权重，大小为1xK；\(\alpha_0\)为决定\(\pi\)形态的超参数，大小为1xK；\(\mu\)和\(\Lambda\)本身为每个正态分量的均值和方差参数。其中，变量间的关系如下： $$p(X|Z,\mu,\Lambda)=\prod_{n=1}^N\prod_{k=1}^K\mathcal{N}(x_n|\mu_k,\Lambda_k^{-1})^{z_{nk}}$$ $$p(Z|\pi) = \prod_{n=1}^{N}\prod_{k=1}^K\pi_{k}^{z_{nk}}$$ $$p(\pi)=\text{Dir}(\pi|\alpha_0)=C(\alpha_0)\prod_{k=1}^K{\pi_k^{\alpha_0-1}}$$ $$p(\mu,\Lambda)=\prod_{k=1}^{K}{\mathcal{N}(\mu_k|m_0,(\beta_0\Lambda_kk)^{-1})\mathcal{W}(\Lambda_k|W_0,v_0)}$$</description>
+    </item>
+    
+  </channel>
+</rss>

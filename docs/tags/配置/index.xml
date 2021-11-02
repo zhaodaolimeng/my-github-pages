@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>配置 on Limeng&#39;s Github Pages</title>
+    <link>/tags/%E9%85%8D%E7%BD%AE/</link>
+    <description>Recent content in 配置 on Limeng&#39;s Github Pages</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Mon, 04 May 2015 00:00:00 +0000</lastBuildDate><atom:link href="/tags/%E9%85%8D%E7%BD%AE/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Nimbits：一个IoT数据汇集平台</title>
+      <link>/posts/20150504/nimbits/</link>
+      <pubDate>Mon, 04 May 2015 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/20150504/nimbits/</guid>
+      <description>1 简介 Nimbits是一个专门针对物联网设计的数据汇集平台。该平台使用嵌入的hsql作为数据存储，使用Java作为编程语言，运行于Web环境中。相对于现有的Google/IBM 等公司的用于IoT的云平台，该平台简单、灵活、高度可定制，可为小型IoT业务提供了一套完整的数据解决方案。本文将介绍如何在本地搭建Appscale集群，并于之上部署Nimbits。
+2 运行环境搭建 需要先后安装Virtual Box、Vagrant、Appscale。安装流程解释请参照 fast-install和Appscale wiki。
+2.1 安装VirtualBox和Vagrant VirtualBox提供虚拟机运行环境，Vargrant提供虚拟机配置的复制和分离运行，类似于Docker的雏形。在安装Vargrant插件时，可能会出现删除VirtualBox的警告，可直接忽视。安装完成之后需要建立Vagrantfile，该文件用于指定虚拟机初始化内存、IP等配置信息。使用vagrant up命令启动vagrant虚拟机，使用vagrant ssh命令与vagrant虚拟机进行ssh通讯。
+2.2 安装Appscale服务 Appscale是类似于Google App Engine的一个分布式应用运行平台。目标搭建的服务分别部署于本机和虚拟机集群。首先，下载基于Ubuntu 12.04的Appscale镜像，可使用wget和aria2c从备用地址加速镜像下载过程。该镜像已经包含集群环境。其次，在本地安装Appscale工具。使用命令appscale init cluster启动集群，使用命令appscale up启动控制服务。使用appscale clean和appscale down分别可清除部署和停止服务。启动服务时，可能出现如下问题：
+stacktrace : Traceback (most recent call last): File &amp;#34;/usr/local/appscale-tools/bin/appscale&amp;#34;, line 57, in appscale.up() File &amp;#34;/usr/local/appscale-tools/bin/../lib/appscale.py&amp;#34;, line 250, in up AppScaleTools.run_instances(options) File &amp;#34;/usr/local/appscale-tools/bin/../lib/appscale_tools.py&amp;#34;, line 362, in run_instances node_layout) File &amp;#34;/usr/local/appscale-tools/bin/../lib/remote_helper.py&amp;#34;, line 202, in start_head_node raise AppControllerException(message) ... 根据这个讨论，关闭所有的Python、Java和Ruby程序可以修复该问题。
+2.3 在集群环境下部署Nimbits 本地使用环境为Ubuntu 12.04、mysql 5.5、Java 7。启动之后可访问以下API进行测试，Nimbits会对应返回系统时间。
+http://localhost:8080/nimbits/service/v2/time。 3.</description>
+    </item>
+    
+  </channel>
+</rss>

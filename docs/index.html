@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta name="generator" content="Hugo 0.88.1" />
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Limeng&#39;s Github Pages</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+		<meta property="og:title" content="Limeng&#39;s Github Pages" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="/" />
+
+
+		<meta itemprop="name" content="Limeng&#39;s Github Pages">
+<meta itemprop="description" content="">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+
+	<link rel="stylesheet" href="/css/style.css">
+	
+	<link rel="alternate" type="application/rss+xml" href="/index.xml" title="Limeng's Github Pages">
+
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo">
+		<a class="logo__link" href="/" title="安全屋" rel="home">
+			<div class="logo__item logo__text">
+					<div class="logo__title">安全屋</div>
+					<div class="logo__tagline">又菜又爱玩</div>
+				</div>
+		</a>
+	</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main list" role="main">
+	<article class="list__item post">
+	
+	<header class="list__header">
+		<h2 class="list__title post__title">
+			<a href="/posts/20170903/snokel/" rel="bookmark">
+			Snorkel学习笔记
+			</a>
+		</h2>
+		<div class="list__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">李勐</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2017-09-03T00:00:00Z">2017-09-03</time></div><div class="meta__item-categories meta__item"><svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg><span class="meta__text"><a class="meta__link" href="/categories/nlp/" rel="category">NLP</a>
+	</span>
+</div></div>
+	</header>
+	<div class="content list__excerpt post__content clearfix">
+		1 简介 Snorkel是deepdive的后续项目，当前在github上很活跃。Snorkel将deepdive中的弱监督的思想进一步完善，使用纯python的形式构成了一套完整弱监督学习框架。
+2 安装 由于Snorkel当前还处于开发状态，所以官方的安装教程不能保证在所有机器上都能顺利完成。 官方使用了anaconda作为python支持环境，而这个环境在个人看来存在不少问题（在单位这个win 7机器上异常的慢）。 我直接在一个ubuntu虚拟机内使用了virtualenv和原生python2.7对这套环境进行了安装。
+step 1: 部署python virtualenv
+为了不污染全局python环境，官方推荐使用conda进行虚拟环境管理，这里使用了virtualenv。
+sudo apt install python-pip python-dev essential-utils pip install python-virtualenv cd snorkel virtualenv snorkel_env source snorkel_env/bin/activate 根据官方文档安装依赖，并启用jupyter对应的功能。
+pip install numba pip install --requirement python-package-requirement.txt jupyter nbextension enable --py widgetsnbextension --sys-prefix step 2: 配置对虚拟机jupyter notebook的远程连接
+jupyter notebook规定远程连接jupyter需要密码。 使用以下命令生成密码的md5序列，放置到jupyter的配置文件中（也可以有其他生成密码的方式）。
+jupyter notebook generate-config python -c &#39;from notebook.auth import passwd; print passwd()&#39; vim ~/.jupyter/jupyter_notebook_config.py 修改生成的jupyter配置文件。
+c.NotebookApp.ip = &#39;*&#39; c.NotebookApp.password = u&#39;sha1:bcd259ccf...your hashed password here&#39; c.
+	</div>
+</article><article class="list__item post">
+	
+	<header class="list__header">
+		<h2 class="list__title post__title">
+			<a href="/posts/20170826-deepdive/deepdive/" rel="bookmark">
+			Deepdive学习笔记
+			</a>
+		</h2>
+		<div class="list__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">李勐</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2017-08-26T00:00:00Z">2017-08-26</time></div><div class="meta__item-categories meta__item"><svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg><span class="meta__text"><a class="meta__link" href="/categories/nlp/" rel="category">NLP</a>
+	</span>
+</div></div>
+	</header>
+	<div class="content list__excerpt post__content clearfix">
+		0 简介 deepdive是一个具有语言识别能力的信息抽取工具，可用作KBC系统（Knowledge Base Construction）的内核。 也可以理解为是一种Automatic KBC工具。 由于基于语法分析器构建，所以deepdive可通过各类文本规则实现实体间关系的抽取。 deepdive面向异构、海量数据，所以其中涉及一些增量处理的机制。 PaleoDeepdive是基于deepdive的一个例子，用于推测人、地点、组织之间的关系。
+deepdive的执行过程可以分为：
+ feature extraction probabilistic knowledge engineering statistical inference and learning  系统结构图如下所示： KBC系统中的四个主要概念：
+ Entity Relationship Mention，一段话中提及到某个实体或者关系了 Relation Mention  Deepdive的工作机制分为特征抽取、领域知识集成、监督学习、推理四步。 闲话，Deepdive的作者之一Christopher Re之后创建了一个数据抽取公司Lattice.io，该公司在2017年3月份左右被苹果公司收购，用于改善Siri。
+1 安装 1.1 非官方中文版cn_deepdive 项目与文档地址：
+ cn-deepdive DeepDive_Chinese  使用了中文版本cndeepdive，来自openkg.cn。但这个版本已经老化，安装过程中有很多坑。
+ moreutils无法安装问题。0.58版本失效，直接在deepdive/extern/bundled文件夹下的bundle.conf中禁用了moreutils工具，并在extern/.build中清理了对应的临时文件，之后使用了apt进行了安装。 inference/dimmwitterd.sh中17行对g++版本检测的sed出现了问题，需要按照github上新版修改。 numa.h: No such file or directory，直接安装libnuma-dev  1.2 官方版本 按照官方教程进行配置：
+ln -s articles-1000.tsv.bz2 input/articles.tsv.bz2 在input目录下有大量可用语料。
+deepdive do articles deepdive query &#39;?- articles(&#34;5beb863f-26b1-4c2f-ba64-0c3e93e72162&#34;, content).&#39; \ format=csv | grep -v &#39;^ 使用Stanford CoreNLP对句子进行标注。包含NER、POS等操作。查询特定文档的分析结果：
+	</div>
+</article><article class="list__item post">
+	
+	<header class="list__header">
+		<h2 class="list__title post__title">
+			<a href="/posts/20160818-lda/lda/" rel="bookmark">
+			LDA模型入门
+			</a>
+		</h2>
+		<div class="list__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">李勐</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2016-08-18T00:00:00Z">2016-08-18</time></div><div class="meta__item-categories meta__item"><svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg><span class="meta__text"><a class="meta__link" href="/categories/nlp/" rel="category">NLP</a>
+	</span>
+</div></div>
+	</header>
+	<div class="content list__excerpt post__content clearfix">
+		1 引子 本文是对Blei等人LDA原始论文的总结。给定大量的文档，如何在无标注的情况下确定每个文档的主题词？LDA(Latent Dirichlet Allocation)是这类主题确定问题的一个成熟的解决方案。LDA最初面向文本挖掘领域，但随后在图像分类、行为识别等领域也得到了应用。LDA是一种典型的非监督模型，模型仅需要输入文档集合的词袋模型，模型可输出每个文档对应的主题，每个主题使用关键词的分布来表示。
+2 模型定义 LDA的PGM形式如上，我们认为主题数目有K个，文档有M个， 每个文档中有N个词。其中，\(\alpha\) 是Dirichlet分布的参数，大小为1xK，用于控制生成主题的聚集程度； \(\theta\) 表示一个文档中主题的分布大小为1xK；\(z\)为一个为每个词安排主题的01随机变量，大小为1xK，且只有一个值为1；\(\beta\)为一个多项分布的集合，大小为KxV，其中每一行代表一个主题中，不同词出现的概率；而w代表每个文档中的一个词。
+沿着上面的PGM的箭头方向，可以总结出词的生成过程。我们已知了每个文档中的词袋模型\(w\)，为了找到一组合适的主题，需要对分布 \(p(w\vert\alpha,\beta)\) 进行推理。由于该分部中蕴含了隐变量主题\(\theta\) ，所以积分将\(\theta\)积掉。代入Dirichlet分布\(p(\theta\vert\alpha)\)，多项分布\(p(z_n\vert\theta)\)，以及一个单独的概率值\(p(w_n\vert z_n,\beta)\)，可得参数的后验概率形式。以下为完整的推导： $$p(w|\alpha,\beta) = \int p(\theta|\alpha)\prod_{n=1}^N p(w|\theta, \beta) d\theta$$ $$= \int p(\theta|\alpha) (\prod_{n=1}^N \sum_{z_n}p(z_n|\theta)p(w_n|z_n,\beta))$$ $$ = \frac{\Gamma(\sum_i\alpha_i)}{\prod_i{\Gamma(\alpha_i)}}\int(\prod_{i=1}^k\theta_i^{\alpha_i-1})(\prod_{n=1}^N\sum_{i=1}^k\prod_{j=1}^V(\theta_i\beta_{ij})^{w_n^j})d\theta$$
+模型的两个关键参数可以通过多种方法进行求解，即模型训练。
+3 模型训练 3.1 变分推理 Blei最初的LDA论文中，使用了变分推理（VB）求解LDA参数。这种方法试图使用一个不受约束的变分分布近似LDA的模型的联合概率。类似的手段可以参见Laplace近似，最经典的应用为使用高斯分布近似Bayesian Logistic Regression中观测的后验分布\(p(w\vert\bf{t})\)。VB个人理解为一种链式的迭代估计框架。使用一个Q函数去近似真实分布函数。
+3.2 Gibbs Sampling 优势是便于编程实现。
+3.3 比较 变分推理的计算快于基于采样的方法，但可能会收敛到局部最优解。Matthew、Blei等人对于LDA在线学习中对变分推理进行了改进。采样方法更为直观、易于工程实现，且在多数场景下，采样的最终性能会好于变分推理。
+4 参考文献 Blei, David. Latent Dirichlet Allocation
+	</div>
+</article><article class="list__item post">
+	
+	<header class="list__header">
+		<h2 class="list__title post__title">
+			<a href="/posts/20160815/prml-ch10-vi/" rel="bookmark">
+			PRML.Ch10读书笔记：变分推理
+			</a>
+		</h2>
+		<div class="list__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">李勐</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2016-08-12T00:00:00Z">2016-08-12</time></div><div class="meta__item-categories meta__item"><svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg><span class="meta__text"><a class="meta__link" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="category">读书笔记</a>
+	</span>
+</div></div>
+	</header>
+	<div class="content list__excerpt post__content clearfix">
+		0 疑问 这类概率推理问题在没有VB方法的时候都是怎么求解的？
+ VB的直接好处是什么？ 什么是平均场估计？ 这里的估计方法和概率图中的BP的具体关系？ VB中每一步的模型都是设定好的吗？例如LDA中使用Dirichlet作为后验概率？ LDA中的VB是如何推导的？  1 引子 本文是PRML第10章部分内容的摘录和总结。在很多概率问题中，如果使用精确求解，那么问题规模与随机变量的个数是指数上升的。以主题模型LDA为例，每个词的生成对应一个随机变量，使用确定性的方法会导致问题规模为\(K^{NM}\)。现有的估计方法包括变分推导、随机模拟/采样、MCMC方法。其中变分推理是一个实现框架，具体而言有Loopy belief propagation方法和Mean field approximation方法。为了简单，以下VB即是说变分推理。
+用最简单的话来讲，VB是说数据集中很多特性经过简单统计能反映原始参数的多少，每次迭代我们首先在E步对这些特性进行统计（实际上是求解充分统计量），之后，在M步看在这些统计结果的限制内，参数最可能是多少。这些特性可能是一些计数结果等，例如在LDA模型中，可能是属于不同主题的词的个数等等。有意思的是，在这个角度上VB方法与采样方法有着很大的相似点，唯一不同的是，VB方法每次迭代有明确的前进方向，而采样是靠数量取胜，从这里也能看出VB和采样的优势分别是速度和精度。
+2 核心思想 变分推理的最终目的是要找到一个形式简单的分布Q，使得其能较好地估计形式复杂的真实分布P的取值。当我们指定一个Q之后，可以列出Q与P的关系： $$\ln{p(\bf{X})}=\mathcal{L}(q)+KL(q||p)\tag{1}$$ 其中， $$\mathcal{L}(q)=\int{q(Z)\ln{\frac{p(X,Z)}{q(Z)}}dZ}$$ $$KL(q||p)=-\int{q(Z)\ln{\frac{p{(Z|X)}}{q(Z)}}dZ}$$
+这里我们使用KL散度描述P与Q的近似程度。KL散度是似然比的对数期望，它也是确定q之后p的混乱程度。另外，由于因为q与p不同分布时\(KL(p\vert\vert q) \neq KL(q\vert\vert p)\)，所以我们实际上面临\(KL(q\vert\vert p)\)和\(KL(p\vert\vert q)\)两个选择，实际情况是前者更为合理。如果我们能获得\(Z\)的解析形式的关系，那么参照EM方法中迭代求解隐变量的思路，即可求解隐变量的随机分布。VB与EM的最大区别在于VB中不再出现模型参数，取而代之的是随机变量。
+2.1 为何使用\(KL(q\vert\vert p)\) \(KL(q\vert\vert p)\)更倾向于使\(q\)去精确拟合\(p\)概率密度为0时的位置，这就导致对于分离的概率密度函数，\(q\)会产生一种聚集效果，即像后两个图一样拟合其中一个分离的分布，而不是像(a)一样试图拟合非0位置，这种行为叫做model-seeking。
+2.2 分布Q的合理形式 这种合理形式叫做可分解分布，满足： $$q(Z)=\prod_{i=1}^{M} q_i(Z_i)$$
+使用这种假设的好处是可将原始分布分解为多个较低维度的成分，可简化计算，这种方法在统计物理中被称为平均场方法。回顾公式(1)，我们的VB的最终目标是求一个Q，使得Q与P的KL距离最小，这等价于\(\mathcal{L}(q)\)的最大化。事实上，由(1)式可直接获得如下关系： $$\mathcal{L}(q)=\int{\ln{p(X,Z)}-\sum_{i}{\ln{q_i}}}\prod_{i}{q_i(x_i)}dZ$$ $$=\int q_{j}\ln{\tilde{p}(X,Z_j)dZ_j}-\int{q_j\ln q_j}dZ_j+\text{const}$$ 以上公式是为了获得\(q_j\)和其他\(q\)的关系，以析解得目标(1)的最优解。推导过程中注意积分变量和提出被积变量中的常量。回顾公式(1)，我们令KL散度直接为0使\(\mathcal{L}(q)=\ln(p)\)，可得以下公式：
+$$\ln{q^\star_{j_{(\bf{Z_j})}}}=\mathbb{E}_{i\neq{j}}\ln{p(\bf{X},\bf{Z})}]+\text{const}\tag{2}$$
+结论就是：为了估计随机变量\(q_j\)的分布，需要对其他所有随机变量的求期望，这样就极小化了KL散度，即使得Q与P更为接近。
+3 实例 VB方法具有一个统一的推导求解框架，但对于不同的模型往往会有不同的insight，PRML中也从不同的方向进行了求解。
+3.1 二元高斯模型 （待补充）
+3.2 混合高斯模型 首先将GMM模型进行贝叶斯化，GMM的生成模型如下：
+$$\alpha_0 \rightarrow \pi \rightarrow Z \rightarrow X \leftarrow \mu,\Lambda$$
+其中，\(X\)为观测变量，大小为1xN；Z为每个观测变量在不同类别中的归属，使用01表示，大小为是KxN；\(\pi\)为不同类别的权重，大小为1xK；\(\alpha_0\)为决定\(\pi\)形态的超参数，大小为1xK；\(\mu\)和\(\Lambda\)本身为每个正态分量的均值和方差参数。其中，变量间的关系如下： $$p(X|Z,\mu,\Lambda)=\prod_{n=1}^N\prod_{k=1}^K\mathcal{N}(x_n|\mu_k,\Lambda_k^{-1})^{z_{nk}}$$ $$p(Z|\pi) = \prod_{n=1}^{N}\prod_{k=1}^K\pi_{k}^{z_{nk}}$$ $$p(\pi)=\text{Dir}(\pi|\alpha_0)=C(\alpha_0)\prod_{k=1}^K{\pi_k^{\alpha_0-1}}$$ $$p(\mu,\Lambda)=\prod_{k=1}^{K}{\mathcal{N}(\mu_k|m_0,(\beta_0\Lambda_kk)^{-1})\mathcal{W}(\Lambda_k|W_0,v_0)}$$
+	</div>
+</article><article class="list__item post">
+	
+	<header class="list__header">
+		<h2 class="list__title post__title">
+			<a href="/posts/20160812/prml-ch9/" rel="bookmark">
+			PRML.Ch9读书笔记：EM方法
+			</a>
+		</h2>
+		<div class="list__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">李勐</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2016-08-12T00:00:00Z">2016-08-12</time></div><div class="meta__item-categories meta__item"><svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg><span class="meta__text"><a class="meta__link" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="category">读书笔记</a>
+	</span>
+</div></div>
+	</header>
+	<div class="content list__excerpt post__content clearfix">
+		1 引子 本文涉及EM的使用场景区别、理论推导。以实践的角度，EM方法是一个迭代优化以求解隐变量的方法。本文内容是PRML第九章的缩减。
+2 EM用于GMM模型 2.1 极大似然尝试求解GMM参数 以GMM为例，这里先试图使用最大似然估计的方式求解参数：
+$$p(x|\pi,\mu,\Sigma)=\sum_{k=1}^{K}\pi_{k}\mathcal{N}(x|\mu_{k},\Sigma_{k})$$
+最终目标是求解两部分内容：未观测变量和模型参数。个人理解对于GMM，其未观测变量可明确地指定为\(\pi_{k}\)，而其模型参数确定为\(\mu_k\)和\(\Sigma_k\)。这里优化目标是当前的估计导致的损失，或者说对数似然函数：
+$$\ln{p(X|\pi,\mu,\Sigma)}=\sum_{n=1}^{N}{\ln\sum_{k=1}^K{\pi_k\mathcal{N}(x_n|\mu_k,\Sigma_k)}}$$
+以上问题由于隐变量的存在，同时由于参数在正态分布的积分中，一般来说是难解的。具体地，对\(\ln{p(X|\pi,\mu,\Sigma)}\)求导，并令导数为0可以看出隐变量和参数之间的关系：
+$$\frac{\partial{\ln{p(X|\pi,\mu,\Sigma)}}}{\partial{\mu_k}}=-\sum_{n=1}^{N} \gamma(z_{nk})\Sigma_k(x_n-\mu_k)=0$$
+$$\frac{\partial{\ln{p(X|\pi,\mu,\Sigma)}}}{\partial{\Sigma_k}} =\sum_{n=1}^N \gamma(z_{nk}) {-\frac{N}{2}\Sigma^{-1}+\frac{N}{2}\Sigma^{-1}\sum_{d=1}^{D}(x_i-\mu)^T \Sigma^{-1}_k (x_i-\mu)\Sigma^{-1}}=0$$ 其中，\(\gamma(z_{nk})\)的物理意义是第n个观测在第k簇的概率，形式为：
+$$\gamma(z_{nk})=\frac{\pi_k\mathcal{N}(x_n|\mu_k,\Sigma_k)}{\sum_j{\pi_j\mathcal{N}(x_n|\mu_j,\Sigma_j)}}$$
+具体的结果可参考PRML。使用以上两个等式，原则上可计算参数和未观测量的值，这里是为了展现：由于对数中本身有加和的形式，这种方式难以获得解析解。需要有一个更便捷的框架解决以上参数求解问题。
+2.2 EM方法估计GMM参数 EM方法正是这样一个框架：套用以上的结果，使用迭代的方法通过不断修正找到一个函数\(q(x)\) ，使得\(q(x)\)与\(p(x)\)接近，那么即可使用\(q(x)\)对最终结果进行近似。具体的步骤如下：
+ 初始化参数\(\mu_k\)、\(\Sigma_k\)和未观测值\(\pi_k\)。一个可行的方式是，由于K-means迭代次数较快，可使用K-means对数据进行预处理，然后选择K-means的中心点作为\(\mu_k\)的初值。 E步，固定模型参数，优化未观测变量： $$\gamma(z_{nk})=\frac{\pi_k\mathcal{N}(x_n|\mu_k,\Sigma_k)}{\sum_j{\pi_j\mathcal{N}(x_n|\mu_j,\Sigma_j)}}$$ M步，M步将固定未观测变量，优化模型参数： $$\mu_k^{new}=\frac{1}{N_k}\sum_{n=1}^{N}\gamma(z_{nk})\bf{x}_n$$ $$\Sigma_k^{new}=\frac{1}{N_k}\sum_{n=1}^{N}\gamma(z_{nk})(\bf{x}_n-\mu_k^{new})(\bf{x}_n-\mu_k^{new})^T$$ 计算likehood，如果结果收敛则停止。  3 EM方法正确性 （待续）
+	</div>
+</article><article class="list__item post">
+	
+	<header class="list__header">
+		<h2 class="list__title post__title">
+			<a href="/posts/20150504/nimbits/" rel="bookmark">
+			Nimbits：一个IoT数据汇集平台
+			</a>
+		</h2>
+		<div class="list__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">李勐</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2015-05-04T00:00:00Z">2015-05-04</time></div><div class="meta__item-categories meta__item"><svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg><span class="meta__text"><a class="meta__link" href="/categories/iot/" rel="category">IoT</a>
+	</span>
+</div></div>
+	</header>
+	<div class="content list__excerpt post__content clearfix">
+		1 简介 Nimbits是一个专门针对物联网设计的数据汇集平台。该平台使用嵌入的hsql作为数据存储，使用Java作为编程语言，运行于Web环境中。相对于现有的Google/IBM 等公司的用于IoT的云平台，该平台简单、灵活、高度可定制，可为小型IoT业务提供了一套完整的数据解决方案。本文将介绍如何在本地搭建Appscale集群，并于之上部署Nimbits。
+2 运行环境搭建 需要先后安装Virtual Box、Vagrant、Appscale。安装流程解释请参照 fast-install和Appscale wiki。
+2.1 安装VirtualBox和Vagrant VirtualBox提供虚拟机运行环境，Vargrant提供虚拟机配置的复制和分离运行，类似于Docker的雏形。在安装Vargrant插件时，可能会出现删除VirtualBox的警告，可直接忽视。安装完成之后需要建立Vagrantfile，该文件用于指定虚拟机初始化内存、IP等配置信息。使用vagrant up命令启动vagrant虚拟机，使用vagrant ssh命令与vagrant虚拟机进行ssh通讯。
+2.2 安装Appscale服务 Appscale是类似于Google App Engine的一个分布式应用运行平台。目标搭建的服务分别部署于本机和虚拟机集群。首先，下载基于Ubuntu 12.04的Appscale镜像，可使用wget和aria2c从备用地址加速镜像下载过程。该镜像已经包含集群环境。其次，在本地安装Appscale工具。使用命令appscale init cluster启动集群，使用命令appscale up启动控制服务。使用appscale clean和appscale down分别可清除部署和停止服务。启动服务时，可能出现如下问题：
+stacktrace : Traceback (most recent call last): File &#34;/usr/local/appscale-tools/bin/appscale&#34;, line 57, in appscale.up() File &#34;/usr/local/appscale-tools/bin/../lib/appscale.py&#34;, line 250, in up AppScaleTools.run_instances(options) File &#34;/usr/local/appscale-tools/bin/../lib/appscale_tools.py&#34;, line 362, in run_instances node_layout) File &#34;/usr/local/appscale-tools/bin/../lib/remote_helper.py&#34;, line 202, in start_head_node raise AppControllerException(message) ... 根据这个讨论，关闭所有的Python、Java和Ruby程序可以修复该问题。
+2.3 在集群环境下部署Nimbits 本地使用环境为Ubuntu 12.04、mysql 5.5、Java 7。启动之后可访问以下API进行测试，Nimbits会对应返回系统时间。
+http://localhost:8080/nimbits/service/v2/time。 3.
+	</div>
+</article>
+</main>
+
+
+			</div>
+			<aside class="sidebar">
+<div class="widget-recent widget">
+	<h4 class="widget__title">Recent Posts</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+			<li class="widget__item"><a class="widget__link" href="/posts/20170903/snokel/">Snorkel学习笔记</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/20170826-deepdive/deepdive/">Deepdive学习笔记</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/20160818-lda/lda/">LDA模型入门</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/20160815/prml-ch10-vi/">PRML.Ch10读书笔记：变分推理</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/20160812/prml-ch9/">PRML.Ch9读书笔记：EM方法</a></li>
+		</ul>
+	</div>
+</div>
+<div class="widget-categories widget">
+	<h4 class="widget__title">Categories</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/iot/">IoT</a></li>
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/nlp/">NLP</a></li>
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">读书笔记</a></li>
+		</ul>
+	</div>
+</div>
+<div class="widget-taglist widget">
+	<h4 class="widget__title">Tags</h4>
+	<div class="widget__content">
+		<a class="widget-taglist__link widget__link btn" href="/tags/iot/" title="IoT">IoT</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/nlp/" title="NLP">NLP</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/prml/" title="PRML">PRML</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%E4%B8%BB%E9%A2%98%E6%A8%A1%E5%9E%8B/" title="主题模型">主题模型</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%E5%B9%B3%E5%8F%B0/" title="平台">平台</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%E6%96%87%E6%9C%AC%E6%8A%BD%E5%8F%96/" title="文本抽取">文本抽取</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" title="机器学习">机器学习</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%E6%A6%82%E7%8E%87%E5%9B%BE/" title="概率图">概率图</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" title="读书笔记">读书笔记</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/%E9%85%8D%E7%BD%AE/" title="配置">配置</a>
+	</div>
+</div>
+<div class="widget-social widget">
+	<h4 class="widget-social__title widget__title">Social</h4>
+	<div class="widget-social__content widget__content">
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="GitHub" rel="noopener noreferrer" href="https://github.com/zhaodaolimeng" target="_blank">
+				<svg class="widget-social__link-icon icon icon-github" width="24" height="24" viewBox="0 0 384 374"><path d="m192 0c-106.1 0-192 85.8-192 191.7 0 84.7 55 156.6 131.3 181.9 9.6 1.8 13.1-4.2 13.1-9.2 0-4.6-.2-16.6-.3-32.6-53.4 11.6-64.7-25.7-64.7-25.7-8.7-22.1-21.3-28-21.3-28-17.4-11.9 1.3-11.6 1.3-11.6 19.3 1.4 29.4 19.8 29.4 19.8 17.1 29.3 44.9 20.8 55.9 15.9 1.7-12.4 6.7-20.8 12.2-25.6-42.6-4.8-87.5-21.3-87.5-94.8 0-20.9 7.5-38 19.8-51.4-2-4.9-8.6-24.3 1.9-50.7 0 0 16.1-5.2 52.8 19.7 15.3-4.2 31.7-6.4 48.1-6.5 16.3.1 32.7 2.2 48.1 6.5 36.7-24.8 52.8-19.7 52.8-19.7 10.5 26.4 3.9 45.9 1.9 50.7 12.3 13.4 19.7 30.5 19.7 51.4 0 73.7-44.9 89.9-87.7 94.6 6.9 5.9 13 17.6 13 35.5 0 25.6-.2 46.3-.2 52.6 0 5.1 3.5 11.1 13.2 9.2 76.2-25.5 131.2-97.3 131.2-182 0-105.9-86-191.7-192-191.7z"/></svg>
+				<span>GitHub</span>
+			</a>
+		</div>
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="Email" href="mailto:%e6%89%be%e5%88%b0%e6%9d%8e%e5%8b%90%e7%9a%84%e5%85%a8%e6%8b%bc%20%e5%9c%a8%20gmail.com">
+				<svg class="widget-social__link-icon icon icon-mail" width="24" height="24" viewBox="0 0 416 288"><path d="m0 16v256 16h16 384 16v-16-256-16h-16-384-16zm347 16-139 92.5-139-92.5zm-148 125.5 9 5.5 9-5.5 167-111.5v210h-352v-210z"/></svg>
+				<span>找到李勐的全拼 在 gmail.com</span>
+			</a>
+		</div>
+
+		
+	</div>
+</div>
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2021 Limeng&#39;s Github Pages.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+</body>
+</html>

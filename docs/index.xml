@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Limeng&#39;s Github Pages</title>
+    <link>/</link>
+    <description>Recent content on Limeng&#39;s Github Pages</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sun, 03 Sep 2017 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Snorkel学习笔记</title>
+      <link>/posts/20170903/snokel/</link>
+      <pubDate>Sun, 03 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/20170903/snokel/</guid>
+      <description>1 简介 Snorkel是deepdive的后续项目，当前在github上很活跃。Snorkel将deepdive中的弱监督的思想进一步完善，使用纯python的形式构成了一套完整弱监督学习框架。
+2 安装 由于Snorkel当前还处于开发状态，所以官方的安装教程不能保证在所有机器上都能顺利完成。 官方使用了anaconda作为python支持环境，而这个环境在个人看来存在不少问题（在单位这个win 7机器上异常的慢）。 我直接在一个ubuntu虚拟机内使用了virtualenv和原生python2.7对这套环境进行了安装。
+step 1: 部署python virtualenv
+为了不污染全局python环境，官方推荐使用conda进行虚拟环境管理，这里使用了virtualenv。
+sudo apt install python-pip python-dev essential-utils pip install python-virtualenv cd snorkel virtualenv snorkel_env source snorkel_env/bin/activate 根据官方文档安装依赖，并启用jupyter对应的功能。
+pip install numba pip install --requirement python-package-requirement.txt jupyter nbextension enable --py widgetsnbextension --sys-prefix step 2: 配置对虚拟机jupyter notebook的远程连接
+jupyter notebook规定远程连接jupyter需要密码。 使用以下命令生成密码的md5序列，放置到jupyter的配置文件中（也可以有其他生成密码的方式）。
+jupyter notebook generate-config python -c &amp;#39;from notebook.auth import passwd; print passwd()&amp;#39; vim ~/.jupyter/jupyter_notebook_config.py 修改生成的jupyter配置文件。
+c.NotebookApp.ip = &amp;#39;*&amp;#39; c.NotebookApp.password = u&amp;#39;sha1:bcd259ccf...your hashed password here&amp;#39; c.</description>
+    </item>
+    
+    <item>
+      <title>Deepdive学习笔记</title>
+      <link>/posts/20170826-deepdive/deepdive/</link>
+      <pubDate>Sat, 26 Aug 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/20170826-deepdive/deepdive/</guid>
+      <description>0 简介 deepdive是一个具有语言识别能力的信息抽取工具，可用作KBC系统（Knowledge Base Construction）的内核。 也可以理解为是一种Automatic KBC工具。 由于基于语法分析器构建，所以deepdive可通过各类文本规则实现实体间关系的抽取。 deepdive面向异构、海量数据，所以其中涉及一些增量处理的机制。 PaleoDeepdive是基于deepdive的一个例子，用于推测人、地点、组织之间的关系。
+deepdive的执行过程可以分为：
+ feature extraction probabilistic knowledge engineering statistical inference and learning  系统结构图如下所示： KBC系统中的四个主要概念：
+ Entity Relationship Mention，一段话中提及到某个实体或者关系了 Relation Mention  Deepdive的工作机制分为特征抽取、领域知识集成、监督学习、推理四步。 闲话，Deepdive的作者之一Christopher Re之后创建了一个数据抽取公司Lattice.io，该公司在2017年3月份左右被苹果公司收购，用于改善Siri。
+1 安装 1.1 非官方中文版cn_deepdive 项目与文档地址：
+ cn-deepdive DeepDive_Chinese  使用了中文版本cndeepdive，来自openkg.cn。但这个版本已经老化，安装过程中有很多坑。
+ moreutils无法安装问题。0.58版本失效，直接在deepdive/extern/bundled文件夹下的bundle.conf中禁用了moreutils工具，并在extern/.build中清理了对应的临时文件，之后使用了apt进行了安装。 inference/dimmwitterd.sh中17行对g++版本检测的sed出现了问题，需要按照github上新版修改。 numa.h: No such file or directory，直接安装libnuma-dev  1.2 官方版本 按照官方教程进行配置：
+ln -s articles-1000.tsv.bz2 input/articles.tsv.bz2 在input目录下有大量可用语料。
+deepdive do articles deepdive query &amp;#39;?- articles(&amp;#34;5beb863f-26b1-4c2f-ba64-0c3e93e72162&amp;#34;, content).&amp;#39; \ format=csv | grep -v &amp;#39;^ 使用Stanford CoreNLP对句子进行标注。包含NER、POS等操作。查询特定文档的分析结果：</description>
+    </item>
+    
+    <item>
+      <title>LDA模型入门</title>
+      <link>/posts/20160818-lda/lda/</link>
+      <pubDate>Thu, 18 Aug 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/20160818-lda/lda/</guid>
+      <description>1 引子 本文是对Blei等人LDA原始论文的总结。给定大量的文档，如何在无标注的情况下确定每个文档的主题词？LDA(Latent Dirichlet Allocation)是这类主题确定问题的一个成熟的解决方案。LDA最初面向文本挖掘领域，但随后在图像分类、行为识别等领域也得到了应用。LDA是一种典型的非监督模型，模型仅需要输入文档集合的词袋模型，模型可输出每个文档对应的主题，每个主题使用关键词的分布来表示。
+2 模型定义 LDA的PGM形式如上，我们认为主题数目有K个，文档有M个， 每个文档中有N个词。其中，\(\alpha\) 是Dirichlet分布的参数，大小为1xK，用于控制生成主题的聚集程度； \(\theta\) 表示一个文档中主题的分布大小为1xK；\(z\)为一个为每个词安排主题的01随机变量，大小为1xK，且只有一个值为1；\(\beta\)为一个多项分布的集合，大小为KxV，其中每一行代表一个主题中，不同词出现的概率；而w代表每个文档中的一个词。
+沿着上面的PGM的箭头方向，可以总结出词的生成过程。我们已知了每个文档中的词袋模型\(w\)，为了找到一组合适的主题，需要对分布 \(p(w\vert\alpha,\beta)\) 进行推理。由于该分部中蕴含了隐变量主题\(\theta\) ，所以积分将\(\theta\)积掉。代入Dirichlet分布\(p(\theta\vert\alpha)\)，多项分布\(p(z_n\vert\theta)\)，以及一个单独的概率值\(p(w_n\vert z_n,\beta)\)，可得参数的后验概率形式。以下为完整的推导： $$p(w|\alpha,\beta) = \int p(\theta|\alpha)\prod_{n=1}^N p(w|\theta, \beta) d\theta$$ $$= \int p(\theta|\alpha) (\prod_{n=1}^N \sum_{z_n}p(z_n|\theta)p(w_n|z_n,\beta))$$ $$ = \frac{\Gamma(\sum_i\alpha_i)}{\prod_i{\Gamma(\alpha_i)}}\int(\prod_{i=1}^k\theta_i^{\alpha_i-1})(\prod_{n=1}^N\sum_{i=1}^k\prod_{j=1}^V(\theta_i\beta_{ij})^{w_n^j})d\theta$$
+模型的两个关键参数可以通过多种方法进行求解，即模型训练。
+3 模型训练 3.1 变分推理 Blei最初的LDA论文中，使用了变分推理（VB）求解LDA参数。这种方法试图使用一个不受约束的变分分布近似LDA的模型的联合概率。类似的手段可以参见Laplace近似，最经典的应用为使用高斯分布近似Bayesian Logistic Regression中观测的后验分布\(p(w\vert\bf{t})\)。VB个人理解为一种链式的迭代估计框架。使用一个Q函数去近似真实分布函数。
+3.2 Gibbs Sampling 优势是便于编程实现。
+3.3 比较 变分推理的计算快于基于采样的方法，但可能会收敛到局部最优解。Matthew、Blei等人对于LDA在线学习中对变分推理进行了改进。采样方法更为直观、易于工程实现，且在多数场景下，采样的最终性能会好于变分推理。
+4 参考文献 Blei, David. Latent Dirichlet Allocation</description>
+    </item>
+    
+    <item>
+      <title>PRML.Ch10读书笔记：变分推理</title>
+      <link>/posts/20160815/prml-ch10-vi/</link>
+      <pubDate>Fri, 12 Aug 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/20160815/prml-ch10-vi/</guid>
+      <description>0 疑问 这类概率推理问题在没有VB方法的时候都是怎么求解的？
+ VB的直接好处是什么？ 什么是平均场估计？ 这里的估计方法和概率图中的BP的具体关系？ VB中每一步的模型都是设定好的吗？例如LDA中使用Dirichlet作为后验概率？ LDA中的VB是如何推导的？  1 引子 本文是PRML第10章部分内容的摘录和总结。在很多概率问题中，如果使用精确求解，那么问题规模与随机变量的个数是指数上升的。以主题模型LDA为例，每个词的生成对应一个随机变量，使用确定性的方法会导致问题规模为\(K^{NM}\)。现有的估计方法包括变分推导、随机模拟/采样、MCMC方法。其中变分推理是一个实现框架，具体而言有Loopy belief propagation方法和Mean field approximation方法。为了简单，以下VB即是说变分推理。
+用最简单的话来讲，VB是说数据集中很多特性经过简单统计能反映原始参数的多少，每次迭代我们首先在E步对这些特性进行统计（实际上是求解充分统计量），之后，在M步看在这些统计结果的限制内，参数最可能是多少。这些特性可能是一些计数结果等，例如在LDA模型中，可能是属于不同主题的词的个数等等。有意思的是，在这个角度上VB方法与采样方法有着很大的相似点，唯一不同的是，VB方法每次迭代有明确的前进方向，而采样是靠数量取胜，从这里也能看出VB和采样的优势分别是速度和精度。
+2 核心思想 变分推理的最终目的是要找到一个形式简单的分布Q，使得其能较好地估计形式复杂的真实分布P的取值。当我们指定一个Q之后，可以列出Q与P的关系： $$\ln{p(\bf{X})}=\mathcal{L}(q)+KL(q||p)\tag{1}$$ 其中， $$\mathcal{L}(q)=\int{q(Z)\ln{\frac{p(X,Z)}{q(Z)}}dZ}$$ $$KL(q||p)=-\int{q(Z)\ln{\frac{p{(Z|X)}}{q(Z)}}dZ}$$
+这里我们使用KL散度描述P与Q的近似程度。KL散度是似然比的对数期望，它也是确定q之后p的混乱程度。另外，由于因为q与p不同分布时\(KL(p\vert\vert q) \neq KL(q\vert\vert p)\)，所以我们实际上面临\(KL(q\vert\vert p)\)和\(KL(p\vert\vert q)\)两个选择，实际情况是前者更为合理。如果我们能获得\(Z\)的解析形式的关系，那么参照EM方法中迭代求解隐变量的思路，即可求解隐变量的随机分布。VB与EM的最大区别在于VB中不再出现模型参数，取而代之的是随机变量。
+2.1 为何使用\(KL(q\vert\vert p)\) \(KL(q\vert\vert p)\)更倾向于使\(q\)去精确拟合\(p\)概率密度为0时的位置，这就导致对于分离的概率密度函数，\(q\)会产生一种聚集效果，即像后两个图一样拟合其中一个分离的分布，而不是像(a)一样试图拟合非0位置，这种行为叫做model-seeking。
+2.2 分布Q的合理形式 这种合理形式叫做可分解分布，满足： $$q(Z)=\prod_{i=1}^{M} q_i(Z_i)$$
+使用这种假设的好处是可将原始分布分解为多个较低维度的成分，可简化计算，这种方法在统计物理中被称为平均场方法。回顾公式(1)，我们的VB的最终目标是求一个Q，使得Q与P的KL距离最小，这等价于\(\mathcal{L}(q)\)的最大化。事实上，由(1)式可直接获得如下关系： $$\mathcal{L}(q)=\int{\ln{p(X,Z)}-\sum_{i}{\ln{q_i}}}\prod_{i}{q_i(x_i)}dZ$$ $$=\int q_{j}\ln{\tilde{p}(X,Z_j)dZ_j}-\int{q_j\ln q_j}dZ_j+\text{const}$$ 以上公式是为了获得\(q_j\)和其他\(q\)的关系，以析解得目标(1)的最优解。推导过程中注意积分变量和提出被积变量中的常量。回顾公式(1)，我们令KL散度直接为0使\(\mathcal{L}(q)=\ln(p)\)，可得以下公式：
+$$\ln{q^\star_{j_{(\bf{Z_j})}}}=\mathbb{E}_{i\neq{j}}\ln{p(\bf{X},\bf{Z})}]+\text{const}\tag{2}$$
+结论就是：为了估计随机变量\(q_j\)的分布，需要对其他所有随机变量的求期望，这样就极小化了KL散度，即使得Q与P更为接近。
+3 实例 VB方法具有一个统一的推导求解框架，但对于不同的模型往往会有不同的insight，PRML中也从不同的方向进行了求解。
+3.1 二元高斯模型 （待补充）
+3.2 混合高斯模型 首先将GMM模型进行贝叶斯化，GMM的生成模型如下：
+$$\alpha_0 \rightarrow \pi \rightarrow Z \rightarrow X \leftarrow \mu,\Lambda$$
+其中，\(X\)为观测变量，大小为1xN；Z为每个观测变量在不同类别中的归属，使用01表示，大小为是KxN；\(\pi\)为不同类别的权重，大小为1xK；\(\alpha_0\)为决定\(\pi\)形态的超参数，大小为1xK；\(\mu\)和\(\Lambda\)本身为每个正态分量的均值和方差参数。其中，变量间的关系如下： $$p(X|Z,\mu,\Lambda)=\prod_{n=1}^N\prod_{k=1}^K\mathcal{N}(x_n|\mu_k,\Lambda_k^{-1})^{z_{nk}}$$ $$p(Z|\pi) = \prod_{n=1}^{N}\prod_{k=1}^K\pi_{k}^{z_{nk}}$$ $$p(\pi)=\text{Dir}(\pi|\alpha_0)=C(\alpha_0)\prod_{k=1}^K{\pi_k^{\alpha_0-1}}$$ $$p(\mu,\Lambda)=\prod_{k=1}^{K}{\mathcal{N}(\mu_k|m_0,(\beta_0\Lambda_kk)^{-1})\mathcal{W}(\Lambda_k|W_0,v_0)}$$</description>
+    </item>
+    
+    <item>
+      <title>PRML.Ch9读书笔记：EM方法</title>
+      <link>/posts/20160812/prml-ch9/</link>
+      <pubDate>Fri, 12 Aug 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/20160812/prml-ch9/</guid>
+      <description>1 引子 本文涉及EM的使用场景区别、理论推导。以实践的角度，EM方法是一个迭代优化以求解隐变量的方法。本文内容是PRML第九章的缩减。
+2 EM用于GMM模型 2.1 极大似然尝试求解GMM参数 以GMM为例，这里先试图使用最大似然估计的方式求解参数：
+$$p(x|\pi,\mu,\Sigma)=\sum_{k=1}^{K}\pi_{k}\mathcal{N}(x|\mu_{k},\Sigma_{k})$$
+最终目标是求解两部分内容：未观测变量和模型参数。个人理解对于GMM，其未观测变量可明确地指定为\(\pi_{k}\)，而其模型参数确定为\(\mu_k\)和\(\Sigma_k\)。这里优化目标是当前的估计导致的损失，或者说对数似然函数：
+$$\ln{p(X|\pi,\mu,\Sigma)}=\sum_{n=1}^{N}{\ln\sum_{k=1}^K{\pi_k\mathcal{N}(x_n|\mu_k,\Sigma_k)}}$$
+以上问题由于隐变量的存在，同时由于参数在正态分布的积分中，一般来说是难解的。具体地，对\(\ln{p(X|\pi,\mu,\Sigma)}\)求导，并令导数为0可以看出隐变量和参数之间的关系：
+$$\frac{\partial{\ln{p(X|\pi,\mu,\Sigma)}}}{\partial{\mu_k}}=-\sum_{n=1}^{N} \gamma(z_{nk})\Sigma_k(x_n-\mu_k)=0$$
+$$\frac{\partial{\ln{p(X|\pi,\mu,\Sigma)}}}{\partial{\Sigma_k}} =\sum_{n=1}^N \gamma(z_{nk}) {-\frac{N}{2}\Sigma^{-1}+\frac{N}{2}\Sigma^{-1}\sum_{d=1}^{D}(x_i-\mu)^T \Sigma^{-1}_k (x_i-\mu)\Sigma^{-1}}=0$$ 其中，\(\gamma(z_{nk})\)的物理意义是第n个观测在第k簇的概率，形式为：
+$$\gamma(z_{nk})=\frac{\pi_k\mathcal{N}(x_n|\mu_k,\Sigma_k)}{\sum_j{\pi_j\mathcal{N}(x_n|\mu_j,\Sigma_j)}}$$
+具体的结果可参考PRML。使用以上两个等式，原则上可计算参数和未观测量的值，这里是为了展现：由于对数中本身有加和的形式，这种方式难以获得解析解。需要有一个更便捷的框架解决以上参数求解问题。
+2.2 EM方法估计GMM参数 EM方法正是这样一个框架：套用以上的结果，使用迭代的方法通过不断修正找到一个函数\(q(x)\) ，使得\(q(x)\)与\(p(x)\)接近，那么即可使用\(q(x)\)对最终结果进行近似。具体的步骤如下：
+ 初始化参数\(\mu_k\)、\(\Sigma_k\)和未观测值\(\pi_k\)。一个可行的方式是，由于K-means迭代次数较快，可使用K-means对数据进行预处理，然后选择K-means的中心点作为\(\mu_k\)的初值。 E步，固定模型参数，优化未观测变量： $$\gamma(z_{nk})=\frac{\pi_k\mathcal{N}(x_n|\mu_k,\Sigma_k)}{\sum_j{\pi_j\mathcal{N}(x_n|\mu_j,\Sigma_j)}}$$ M步，M步将固定未观测变量，优化模型参数： $$\mu_k^{new}=\frac{1}{N_k}\sum_{n=1}^{N}\gamma(z_{nk})\bf{x}_n$$ $$\Sigma_k^{new}=\frac{1}{N_k}\sum_{n=1}^{N}\gamma(z_{nk})(\bf{x}_n-\mu_k^{new})(\bf{x}_n-\mu_k^{new})^T$$ 计算likehood，如果结果收敛则停止。  3 EM方法正确性 （待续）</description>
+    </item>
+    
+    <item>
+      <title>Nimbits：一个IoT数据汇集平台</title>
+      <link>/posts/20150504/nimbits/</link>
+      <pubDate>Mon, 04 May 2015 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/20150504/nimbits/</guid>
+      <description>1 简介 Nimbits是一个专门针对物联网设计的数据汇集平台。该平台使用嵌入的hsql作为数据存储，使用Java作为编程语言，运行于Web环境中。相对于现有的Google/IBM 等公司的用于IoT的云平台，该平台简单、灵活、高度可定制，可为小型IoT业务提供了一套完整的数据解决方案。本文将介绍如何在本地搭建Appscale集群，并于之上部署Nimbits。
+2 运行环境搭建 需要先后安装Virtual Box、Vagrant、Appscale。安装流程解释请参照 fast-install和Appscale wiki。
+2.1 安装VirtualBox和Vagrant VirtualBox提供虚拟机运行环境，Vargrant提供虚拟机配置的复制和分离运行，类似于Docker的雏形。在安装Vargrant插件时，可能会出现删除VirtualBox的警告，可直接忽视。安装完成之后需要建立Vagrantfile，该文件用于指定虚拟机初始化内存、IP等配置信息。使用vagrant up命令启动vagrant虚拟机，使用vagrant ssh命令与vagrant虚拟机进行ssh通讯。
+2.2 安装Appscale服务 Appscale是类似于Google App Engine的一个分布式应用运行平台。目标搭建的服务分别部署于本机和虚拟机集群。首先，下载基于Ubuntu 12.04的Appscale镜像，可使用wget和aria2c从备用地址加速镜像下载过程。该镜像已经包含集群环境。其次，在本地安装Appscale工具。使用命令appscale init cluster启动集群，使用命令appscale up启动控制服务。使用appscale clean和appscale down分别可清除部署和停止服务。启动服务时，可能出现如下问题：
+stacktrace : Traceback (most recent call last): File &amp;#34;/usr/local/appscale-tools/bin/appscale&amp;#34;, line 57, in appscale.up() File &amp;#34;/usr/local/appscale-tools/bin/../lib/appscale.py&amp;#34;, line 250, in up AppScaleTools.run_instances(options) File &amp;#34;/usr/local/appscale-tools/bin/../lib/appscale_tools.py&amp;#34;, line 362, in run_instances node_layout) File &amp;#34;/usr/local/appscale-tools/bin/../lib/remote_helper.py&amp;#34;, line 202, in start_head_node raise AppControllerException(message) ... 根据这个讨论，关闭所有的Python、Java和Ruby程序可以修复该问题。
+2.3 在集群环境下部署Nimbits 本地使用环境为Ubuntu 12.04、mysql 5.5、Java 7。启动之后可访问以下API进行测试，Nimbits会对应返回系统时间。
+http://localhost:8080/nimbits/service/v2/time。 3.</description>
+    </item>
+    
+  </channel>
+</rss>

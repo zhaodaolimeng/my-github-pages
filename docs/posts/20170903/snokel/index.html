@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Snorkel学习笔记 - Limeng&#39;s Github Pages</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+		<meta property="og:title" content="Snorkel学习笔记" />
+<meta property="og:description" content="1 简介 Snorkel是deepdive的后续项目，当前在github上很活跃。Snorkel将deepdive中的弱监督的思想进一步完善，使用纯python的形式构成了一套完整弱监督学习框架。
+2 安装 由于Snorkel当前还处于开发状态，所以官方的安装教程不能保证在所有机器上都能顺利完成。 官方使用了anaconda作为python支持环境，而这个环境在个人看来存在不少问题（在单位这个win 7机器上异常的慢）。 我直接在一个ubuntu虚拟机内使用了virtualenv和原生python2.7对这套环境进行了安装。
+step 1: 部署python virtualenv
+为了不污染全局python环境，官方推荐使用conda进行虚拟环境管理，这里使用了virtualenv。
+sudo apt install python-pip python-dev essential-utils pip install python-virtualenv cd snorkel virtualenv snorkel_env source snorkel_env/bin/activate 根据官方文档安装依赖，并启用jupyter对应的功能。
+pip install numba pip install --requirement python-package-requirement.txt jupyter nbextension enable --py widgetsnbextension --sys-prefix step 2: 配置对虚拟机jupyter notebook的远程连接
+jupyter notebook规定远程连接jupyter需要密码。 使用以下命令生成密码的md5序列，放置到jupyter的配置文件中（也可以有其他生成密码的方式）。
+jupyter notebook generate-config python -c &#39;from notebook.auth import passwd; print passwd()&#39; vim ~/.jupyter/jupyter_notebook_config.py 修改生成的jupyter配置文件。
+c.NotebookApp.ip = &#39;*&#39; c.NotebookApp.password = u&#39;sha1:bcd259ccf...your hashed password here&#39; c." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/20170903/snokel/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2017-09-03T00:00:00+00:00" />
+<meta property="article:modified_time" content="2017-09-03T00:00:00+00:00" />
+
+
+		<meta itemprop="name" content="Snorkel学习笔记">
+<meta itemprop="description" content="1 简介 Snorkel是deepdive的后续项目，当前在github上很活跃。Snorkel将deepdive中的弱监督的思想进一步完善，使用纯python的形式构成了一套完整弱监督学习框架。
+2 安装 由于Snorkel当前还处于开发状态，所以官方的安装教程不能保证在所有机器上都能顺利完成。 官方使用了anaconda作为python支持环境，而这个环境在个人看来存在不少问题（在单位这个win 7机器上异常的慢）。 我直接在一个ubuntu虚拟机内使用了virtualenv和原生python2.7对这套环境进行了安装。
+step 1: 部署python virtualenv
+为了不污染全局python环境，官方推荐使用conda进行虚拟环境管理，这里使用了virtualenv。
+sudo apt install python-pip python-dev essential-utils pip install python-virtualenv cd snorkel virtualenv snorkel_env source snorkel_env/bin/activate 根据官方文档安装依赖，并启用jupyter对应的功能。
+pip install numba pip install --requirement python-package-requirement.txt jupyter nbextension enable --py widgetsnbextension --sys-prefix step 2: 配置对虚拟机jupyter notebook的远程连接
+jupyter notebook规定远程连接jupyter需要密码。 使用以下命令生成密码的md5序列，放置到jupyter的配置文件中（也可以有其他生成密码的方式）。
+jupyter notebook generate-config python -c &#39;from notebook.auth import passwd; print passwd()&#39; vim ~/.jupyter/jupyter_notebook_config.py 修改生成的jupyter配置文件。
+c.NotebookApp.ip = &#39;*&#39; c.NotebookApp.password = u&#39;sha1:bcd259ccf...your hashed password here&#39; c."><meta itemprop="datePublished" content="2017-09-03T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2017-09-03T00:00:00+00:00" />
+<meta itemprop="wordCount" content="119">
+<meta itemprop="keywords" content="NLP,文本抽取," />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+
+	<link rel="stylesheet" href="/css/style.css">
+	
+
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo">
+		<a class="logo__link" href="/" title="安全屋" rel="home">
+			<div class="logo__item logo__text">
+					<div class="logo__title">安全屋</div>
+					<div class="logo__tagline">又菜又爱玩</div>
+				</div>
+		</a>
+	</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">Snorkel学习笔记</h1>
+			<div class="post__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">李勐</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2017-09-03T00:00:00Z">2017-09-03</time></div><div class="meta__item-categories meta__item"><svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg><span class="meta__text"><a class="meta__link" href="/categories/nlp/" rel="category">NLP</a>
+	</span>
+</div></div>
+		</header>
+		
+<div class="post__toc toc">
+	<div class="toc__title">Page content</div>
+	<div class="toc__menu">
+		<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-简介">1 简介</a></li>
+    <li><a href="#2-安装">2 安装</a></li>
+    <li><a href="#3-内部机制">3 内部机制</a></li>
+    <li><a href="#4-总结">4 总结</a></li>
+  </ul>
+</nav>
+	</div>
+</div><div class="content post__content clearfix">
+			<h2 id="1-简介">1 简介</h2>
+<p>Snorkel是deepdive的后续项目，当前在github上很活跃。Snorkel将deepdive中的弱监督的思想进一步完善，使用纯python的形式构成了一套完整弱监督学习框架。</p>
+<h2 id="2-安装">2 安装</h2>
+<p>由于Snorkel当前还处于开发状态，所以官方的安装教程不能保证在所有机器上都能顺利完成。
+官方使用了anaconda作为python支持环境，而这个环境在个人看来存在不少问题（在单位这个win 7机器上异常的慢）。
+我直接在一个ubuntu虚拟机内使用了virtualenv和原生python2.7对这套环境进行了安装。</p>
+<p><strong>step 1: 部署python virtualenv</strong></p>
+<p>为了不污染全局python环境，官方推荐使用conda进行虚拟环境管理，这里使用了virtualenv。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">sudo apt install python-pip python-dev essential-utils
+pip install python-virtualenv
+cd snorkel
+virtualenv snorkel_env
+source snorkel_env/bin/activate
+</code></pre></div><p>根据官方文档安装依赖，并启用jupyter对应的功能。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">pip install numba
+pip install --requirement python-package-requirement.txt
+jupyter nbextension enable --py widgetsnbextension --sys-prefix
+</code></pre></div><p><strong>step 2: 配置对虚拟机jupyter notebook的远程连接</strong></p>
+<p>jupyter notebook规定远程连接jupyter需要密码。
+使用以下命令生成密码的md5序列，放置到jupyter的配置文件中（也可以有其他生成密码的方式）。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">jupyter notebook generate-config
+python -c <span style="color:#e6db74">&#39;from notebook.auth import passwd; print passwd()&#39;</span>
+vim ~/.jupyter/jupyter_notebook_config.py
+</code></pre></div><p>修改生成的jupyter配置文件。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">c.NotebookApp.ip <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;*&#39;</span>
+c.NotebookApp.password <span style="color:#f92672">=</span> u<span style="color:#e6db74">&#39;sha1:bcd259ccf...your hashed password here&#39;</span>
+c.NotebookApp.open_browser <span style="color:#f92672">=</span> False
+c.NotebookApp.port <span style="color:#f92672">=</span> <span style="color:#ae81ff">8888</span>
+</code></pre></div><p>这里的虚拟机我使用了virtualbox，所以还需要对nat的端口进行映射，外部host才能访问到虚拟机中运行的jupyter。</p>
+<p><strong>step 3: 启动项目</strong></p>
+<p>按理来说直接执行./run.sh即可，但我在这里执行之后set_env.sh没有生效，并且没有错误提示。遇到该情况后，单独执行了以下命令，手工实现了run.sh的功能。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">./install-parser.sh
+unzip stanford-corenlp-full-2015-12-09.zip
+mv stanford-corenlp-full-2015-12-09/stanford-corenlp-3.6.0.jar .
+source set_env.sh
+cd <span style="color:#e6db74">&#34;</span>$SNORKELHOME<span style="color:#e6db74">&#34;</span>
+git submodule update --init --recursive
+jupyter notebook
+</code></pre></div><h2 id="3-内部机制">3 内部机制</h2>
+<p>与Deepdive的方式相同，一般使用一个外部库进行distance supervise，通过文本、文档结构等多种显性特征进行实体关系推断。
+开发者可以人工将这些显性特征进行深度的加工和组合，定义出不同的LF（Labeling Function）辅助特征提取，这对应了Deepdive中的UDF（User Defined Function）。
+还没有彻底弄清楚这里提到的GenerativeModel是否真的和传统意义上的生成模型是一回事？为什么感觉这里的Generative Model好像是一个以判别为目标的全新的模型？</p>
+<p>用例：</p>
+<ul>
+<li>Weather sentiment。对于tweet中的言论，已有少量的trusted work标注的信息和大量crowdsource的标注信息。Snorkel在这里使用时，将每个人的标注准确度作为一个随机变量，通过估计这些随机变量的分布，修正最终的标签。</li>
+<li>Spouse。这个任务和deepdive中的例程是相同的，都是通过一部分人工规则和辅助库，估计当前规则中是否存在问题，最终生成大量的可用样本。</li>
+</ul>
+<h2 id="4-总结">4 总结</h2>
+<p>Deepdive和Snorkel都是从扩充训练样本的角度出发，提供了一套完整的通过专家知识生成训练数据的方法。但在整体任务的角度，如果采用这些原始标签，仍然利用这些（用于生成训练样本的）专家知识（以冲突消解的形式）生成特征、之后再使用模型进行集成训练，在理论上很可能与Deepdive和Snorkel的方法是等效的，这些都还有待验证。不管怎么说，Deepdive和Snorkel对于知识抽取这样的单一任务而言都是不错的工具。</p>
+
+		</div>
+		<footer class="post__footer">
+			
+<div class="post__tags tags clearfix">
+	<svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5 0 11V3C0 1.5.8.8.8.8S1.5 0 3 0h8c1.5 0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/nlp/" rel="tag">NLP</a>
+		</li>
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/%E6%96%87%E6%9C%AC%E6%8A%BD%E5%8F%96/" rel="tag">文本抽取</a>
+		</li>
+	</ul>
+</div>
+		</footer>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<div class="authorbox__header">
+		<span class="authorbox__name">About 李勐</span>
+	</div>
+</div>
+
+<nav class="pager flex">
+	<div class="pager__item pager__item--prev">
+		<a class="pager__link" href="/posts/20170826-deepdive/deepdive/" rel="prev">
+			<span class="pager__subtitle">«&thinsp;Previous</span>
+			<p class="pager__title">Deepdive学习笔记</p>
+		</a>
+	</div>
+</nav>
+
+
+			</div>
+			
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2021 Limeng&#39;s Github Pages.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+</body>
+</html>

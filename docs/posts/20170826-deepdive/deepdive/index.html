@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Deepdive学习笔记 - Limeng&#39;s Github Pages</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+		<meta property="og:title" content="Deepdive学习笔记" />
+<meta property="og:description" content="0 简介 deepdive是一个具有语言识别能力的信息抽取工具，可用作KBC系统（Knowledge Base Construction）的内核。 也可以理解为是一种Automatic KBC工具。 由于基于语法分析器构建，所以deepdive可通过各类文本规则实现实体间关系的抽取。 deepdive面向异构、海量数据，所以其中涉及一些增量处理的机制。 PaleoDeepdive是基于deepdive的一个例子，用于推测人、地点、组织之间的关系。
+deepdive的执行过程可以分为：
+ feature extraction probabilistic knowledge engineering statistical inference and learning  系统结构图如下所示： KBC系统中的四个主要概念：
+ Entity Relationship Mention，一段话中提及到某个实体或者关系了 Relation Mention  Deepdive的工作机制分为特征抽取、领域知识集成、监督学习、推理四步。 闲话，Deepdive的作者之一Christopher Re之后创建了一个数据抽取公司Lattice.io，该公司在2017年3月份左右被苹果公司收购，用于改善Siri。
+1 安装 1.1 非官方中文版cn_deepdive 项目与文档地址：
+ cn-deepdive DeepDive_Chinese  使用了中文版本cndeepdive，来自openkg.cn。但这个版本已经老化，安装过程中有很多坑。
+ moreutils无法安装问题。0.58版本失效，直接在deepdive/extern/bundled文件夹下的bundle.conf中禁用了moreutils工具，并在extern/.build中清理了对应的临时文件，之后使用了apt进行了安装。 inference/dimmwitterd.sh中17行对g&#43;&#43;版本检测的sed出现了问题，需要按照github上新版修改。 numa.h: No such file or directory，直接安装libnuma-dev  1.2 官方版本 按照官方教程进行配置：
+ln -s articles-1000.tsv.bz2 input/articles.tsv.bz2 在input目录下有大量可用语料。
+deepdive do articles deepdive query &#39;?- articles(&#34;5beb863f-26b1-4c2f-ba64-0c3e93e72162&#34;, content).&#39; \ format=csv | grep -v &#39;^ 使用Stanford CoreNLP对句子进行标注。包含NER、POS等操作。查询特定文档的分析结果：" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/20170826-deepdive/deepdive/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2017-08-26T00:00:00+00:00" />
+<meta property="article:modified_time" content="2017-08-26T00:00:00+00:00" />
+
+
+		<meta itemprop="name" content="Deepdive学习笔记">
+<meta itemprop="description" content="0 简介 deepdive是一个具有语言识别能力的信息抽取工具，可用作KBC系统（Knowledge Base Construction）的内核。 也可以理解为是一种Automatic KBC工具。 由于基于语法分析器构建，所以deepdive可通过各类文本规则实现实体间关系的抽取。 deepdive面向异构、海量数据，所以其中涉及一些增量处理的机制。 PaleoDeepdive是基于deepdive的一个例子，用于推测人、地点、组织之间的关系。
+deepdive的执行过程可以分为：
+ feature extraction probabilistic knowledge engineering statistical inference and learning  系统结构图如下所示： KBC系统中的四个主要概念：
+ Entity Relationship Mention，一段话中提及到某个实体或者关系了 Relation Mention  Deepdive的工作机制分为特征抽取、领域知识集成、监督学习、推理四步。 闲话，Deepdive的作者之一Christopher Re之后创建了一个数据抽取公司Lattice.io，该公司在2017年3月份左右被苹果公司收购，用于改善Siri。
+1 安装 1.1 非官方中文版cn_deepdive 项目与文档地址：
+ cn-deepdive DeepDive_Chinese  使用了中文版本cndeepdive，来自openkg.cn。但这个版本已经老化，安装过程中有很多坑。
+ moreutils无法安装问题。0.58版本失效，直接在deepdive/extern/bundled文件夹下的bundle.conf中禁用了moreutils工具，并在extern/.build中清理了对应的临时文件，之后使用了apt进行了安装。 inference/dimmwitterd.sh中17行对g&#43;&#43;版本检测的sed出现了问题，需要按照github上新版修改。 numa.h: No such file or directory，直接安装libnuma-dev  1.2 官方版本 按照官方教程进行配置：
+ln -s articles-1000.tsv.bz2 input/articles.tsv.bz2 在input目录下有大量可用语料。
+deepdive do articles deepdive query &#39;?- articles(&#34;5beb863f-26b1-4c2f-ba64-0c3e93e72162&#34;, content).&#39; \ format=csv | grep -v &#39;^ 使用Stanford CoreNLP对句子进行标注。包含NER、POS等操作。查询特定文档的分析结果："><meta itemprop="datePublished" content="2017-08-26T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2017-08-26T00:00:00+00:00" />
+<meta itemprop="wordCount" content="329">
+<meta itemprop="keywords" content="NLP,文本抽取," />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+
+	<link rel="stylesheet" href="/css/style.css">
+	
+
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo">
+		<a class="logo__link" href="/" title="安全屋" rel="home">
+			<div class="logo__item logo__text">
+					<div class="logo__title">安全屋</div>
+					<div class="logo__tagline">又菜又爱玩</div>
+				</div>
+		</a>
+	</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">Deepdive学习笔记</h1>
+			<div class="post__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">李勐</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2017-08-26T00:00:00Z">2017-08-26</time></div><div class="meta__item-categories meta__item"><svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg><span class="meta__text"><a class="meta__link" href="/categories/nlp/" rel="category">NLP</a>
+	</span>
+</div></div>
+		</header>
+		
+<div class="post__toc toc">
+	<div class="toc__title">Page content</div>
+	<div class="toc__menu">
+		<nav id="TableOfContents">
+  <ul>
+    <li><a href="#0-简介">0 简介</a></li>
+    <li><a href="#1-安装">1 安装</a>
+      <ul>
+        <li><a href="#11-非官方中文版cn_deepdive">1.1 非官方中文版cn_deepdive</a></li>
+        <li><a href="#12-官方版本">1.2 官方版本</a></li>
+      </ul>
+    </li>
+    <li><a href="#2-工作机理">2 工作机理</a>
+      <ul>
+        <li><a href="#21-特征抽取机制">2.1 特征抽取机制</a></li>
+        <li><a href="#22-领域知识集成">2.2 领域知识集成</a></li>
+        <li><a href="#23-监督学习">2.3 监督学习</a></li>
+        <li><a href="#24-推理">2.4 推理</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-deepdive构成和程序使用">3 deepdive构成和程序使用</a>
+      <ul>
+        <li><a href="#31-ddlog语言">3.1 DDlog语言</a></li>
+        <li><a href="#32-udf用户自定义函数">3.2 UDF用户自定义函数</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+	</div>
+</div><div class="content post__content clearfix">
+			<h2 id="0-简介">0 简介</h2>
+<p>deepdive是一个具有语言识别能力的信息抽取工具，可用作KBC系统（Knowledge Base Construction）的内核。
+也可以理解为是一种Automatic KBC工具。
+由于基于语法分析器构建，所以deepdive可通过各类文本规则实现实体间关系的抽取。
+deepdive面向异构、海量数据，所以其中涉及一些增量处理的机制。
+PaleoDeepdive是基于deepdive的一个例子，用于推测人、地点、组织之间的关系。</p>
+<p>deepdive的执行过程可以分为：</p>
+<ul>
+<li>feature extraction</li>
+<li>probabilistic knowledge engineering</li>
+<li>statistical inference and learning</li>
+</ul>
+<p>系统结构图如下所示：
+<img src="./../assets/1-architecture.png" alt="系统结构图"></p>
+<p>KBC系统中的四个主要概念：</p>
+<ul>
+<li>Entity</li>
+<li>Relationship</li>
+<li>Mention，一段话中提及到某个实体或者关系了</li>
+<li>Relation Mention</li>
+</ul>
+<p>Deepdive的工作机制分为特征抽取、领域知识集成、监督学习、推理四步。
+闲话，Deepdive的作者之一Christopher Re之后创建了一个数据抽取公司Lattice.io，该公司在2017年3月份左右被苹果公司收购，用于改善Siri。</p>
+<h2 id="1-安装">1 安装</h2>
+<h3 id="11-非官方中文版cn_deepdive">1.1 非官方中文版cn_deepdive</h3>
+<p>项目与文档地址：</p>
+<ul>
+<li><a href="http://openkg.cn/tool/cn-deepdive">cn-deepdive</a></li>
+<li><a href="https://github.com/qiangsiwei/DeepDive_Chinese">DeepDive_Chinese</a></li>
+</ul>
+<p>使用了中文版本cndeepdive，来自openkg.cn。但这个版本已经老化，安装过程中有很多坑。</p>
+<ul>
+<li>moreutils无法安装问题。0.58版本失效，直接在deepdive/extern/bundled文件夹下的bundle.conf中禁用了moreutils工具，并在extern/.build中清理了对应的临时文件，之后使用了apt进行了安装。</li>
+<li>inference/dimmwitterd.sh中17行对g++版本检测的sed出现了问题，需要按照github上新版修改。</li>
+<li><code>numa.h: No such file or directory</code>，直接安装libnuma-dev</li>
+</ul>
+<h3 id="12-官方版本">1.2 官方版本</h3>
+<p>按照<a href="http://deepdive.stanford.edu/quickstart">官方教程</a>进行配置：</p>
+<pre tabindex="0"><code>ln -s articles-1000.tsv.bz2 input/articles.tsv.bz2
+</code></pre><p>在input目录下有大量可用语料。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql">deepdive <span style="color:#66d9ef">do</span> articles
+deepdive query <span style="color:#e6db74">&#39;?- articles(&#34;5beb863f-26b1-4c2f-ba64-0c3e93e72162&#34;, content).&#39;</span> <span style="color:#960050;background-color:#1e0010">\</span>
+    format<span style="color:#f92672">=</span>csv <span style="color:#f92672">|</span> grep <span style="color:#f92672">-</span>v <span style="color:#e6db74">&#39;^
+</span></code></pre></div><p>使用Stanford CoreNLP对句子进行标注。包含NER、POS等操作。查询特定文档的分析结果：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql">deepdive <span style="color:#66d9ef">do</span> sentences
+deepdive query <span style="color:#e6db74">&#39;?- 
+</span><span style="color:#e6db74">    sentences(&#34;5beb863f-26b1-4c2f-ba64-0c3e93e72162&#34;, _, _, 
+</span><span style="color:#e6db74">    tokens, _, _, ner_tags, _, _, _).&#39;</span> 
+    format<span style="color:#f92672">=</span>csv <span style="color:#f92672">|</span> grep PERSON <span style="color:#f92672">|</span> tail
+</code></pre></div><p>查看相关的命名实体对：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql">deepdive <span style="color:#66d9ef">do</span> spouse_candidate
+deepdive query <span style="color:#e6db74">&#39;name1, name2 ?-  
+</span><span style="color:#e6db74">    spouse_candidate(p1, name1, p2, name2),  
+</span><span style="color:#e6db74">    person_mention(p1, _, &#34;5beb863f-26b1-4c2f-ba64-0c3e93e72162&#34;, _, _, _).&#39;</span>
+</code></pre></div><p>运行查询：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql">deepdive <span style="color:#66d9ef">do</span> probabilities
+deepdive <span style="color:#66d9ef">sql</span> <span style="color:#e6db74">&#34;
+</span><span style="color:#e6db74">    SELECT p1.mention_text, p2.mention_text, expectation
+</span><span style="color:#e6db74">    FROM has_spouse_label_inference i, person_mention p1, person_mention p2
+</span><span style="color:#e6db74">    WHERE p1_id LIKE &#39;5beb863f-26b1-4c2f-ba64-0c3e93e72162%&#39;
+</span><span style="color:#e6db74">      AND p1_id = p1.mention_id AND p2_id = p2.mention_id&#34;</span>
+</code></pre></div><p>可视化展示：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql">mindbender <span style="color:#66d9ef">search</span> <span style="color:#66d9ef">update</span>
+mindbender <span style="color:#66d9ef">search</span> gui
+</code></pre></div><h2 id="2-工作机理">2 工作机理</h2>
+<p><img src="./../assets/2-kbc-model.png" alt="标准的KBC的运行机制"></p>
+<p>数据将首先进行实体识别，之后进行实体连接，最后输出满足用户指定关系的集合。例如，官方的has_couple这个例子中，输入是一个文档集合和一个小的人工标注的实例集合。系统输出是属于couple的list of pairs。
+Deepdive包含以下关键执行步骤：</p>
+<h3 id="21-特征抽取机制">2.1 特征抽取机制</h3>
+<p>特征抽取是deepdive实现知识抽取的第一步。deepdive会使用Stanford NLPCore工具将所有的原始数据进行清洗，并每句一行存储于数据库中。这些原始特征内容包括：HTML标记、POS标签、语言标记。deepdive支持人工从原始数据中指定特定的pattern作为特征（所以需要专家撰写特征提取脚本，符合deepdive特征接口）。</p>
+<p><img src="./../assets/fig2.2-image.png" alt="特征抽取"></p>
+<p>这些特征包括：</p>
+<ul>
+<li>将某两个词在标签中是否是同一行作为特征</li>
+<li>语序结构上的特征</li>
+</ul>
+<p>这些特征将用作之后自动推理的“证据”，用于推断不同实体之间的关系。</p>
+<h3 id="22-领域知识集成">2.2 领域知识集成</h3>
+<p>deepdive支持已知“事实”的输入，这些事实（专家知识）将在之后推理过程中对推理结果进行约束，可以改善结果。这些专家知识不是必须的。</p>
+<h3 id="23-监督学习">2.3 监督学习</h3>
+<p>很难找到足够的训练样本（用于训练特征组合）。
+deepdive里面有一种叫distant supervision的机制。
+其主体思想是在现有文本资料中人工找到具有正例的样本，并通过相关的关系生成反例样本。</p>
+<h3 id="24-推理">2.4 推理</h3>
+<p>使用了factor graph进行对特征、知识的推理。factor graph在表示中分为User Schema和Correlation Schema两部分，定义为<code>D=[R,F]</code>。以文本为例，factor graph将知识拆解为了随机变量和他们之间的关系。其中随机变量为不同位置的词语值，关系为词语位置、结构上的关系。Deepdive中的推理机制使用了Gibbs Sampling执行。</p>
+<h2 id="3-deepdive构成和程序使用">3 deepdive构成和程序使用</h2>
+<p><img src="../20170826-deepdive/assets/fig3.1-image.png" alt="程序构成"></p>
+<p>deepdive用户主要需要定义以下内容：</p>
+<ul>
+<li>输入数据的样式，包括关系样式、中间数据格式与数据之间的映射关系。</li>
+<li>用于进行distance supervise的规则。</li>
+<li>推理参数。</li>
+<li>原始数据处理方式。</li>
+<li>特征提取方式。
+其中前三项内容由每个deepdive应用中的app.ddlog文件定义，后两项一般使用udf中的python或shell脚本实现。</li>
+</ul>
+<h3 id="31-ddlog语言">3.1 DDlog语言</h3>
+<p>DDlog是deepdive的专有语言，用于定义deepdive应用中的用户函数（UDF）和推理模型。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-lisp" data-lang="lisp">Q(x, y) <span style="color:#e6db74">:-</span> R(x, y)<span style="color:#f92672">,</span> S(y)<span style="color:#f92672">.</span>
+Q(x, y) <span style="color:#e6db74">:-</span> <span style="color:#66d9ef">T</span>(x, y)<span style="color:#f92672">.</span>
+</code></pre></div><p>关系推理，表示Q可以由R推导出来（relation Q are derived from relations R and S）。此外，规则部分情况下可以进行简化，例如以上规则可以化简为。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-lisp" data-lang="lisp">Q(x, y) <span style="color:#e6db74">:-</span> R(x, y)<span style="color:#f92672">,</span> S(y)<span style="color:#75715e">; T(x, y).</span>
+</code></pre></div><p>此外<a href="http://deepdive.stanford.edu/writing-dataflow-ddlog">DDlog</a>的文法支持常规逻辑运算和算术运算符，以及条件、表连接、聚合等SQL操作。</p>
+<h3 id="32-udf用户自定义函数">3.2 UDF用户自定义函数</h3>
+<p>UDF如果是python实现的话，将用annotation显示定义输入输出，同时需要在UDF中的添加对应的描述：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-lisp" data-lang="lisp"><span style="color:#a6e22e">function</span> classify_articles over (id int, author text, words text[])
+    returns (article_id int, topic text)
+    implementation <span style="color:#e6db74">&#34;udf/classify.py&#34;</span> handles tsj lines.
+</code></pre></div><p>对应的python程序将如下所示：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> deepdive <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>  <span style="color:#75715e"># Required for @tsj_extractor and @returns</span>
+
+compsci_authors <span style="color:#f92672">=</span> [<span style="color:#f92672">...</span>]
+bio_authors     <span style="color:#f92672">=</span> [<span style="color:#f92672">...</span>]
+bio_words       <span style="color:#f92672">=</span> [<span style="color:#f92672">...</span>]
+
+<span style="color:#a6e22e">@tsj_extractor</span>
+<span style="color:#a6e22e">@returns</span>(<span style="color:#66d9ef">lambda</span> article_id <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;int&#34;</span>, topic <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;text&#34;</span>,:[])
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">classify</span>(article_id <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;int&#34;</span>, author <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;text&#34;</span>, words <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;text[]&#34;</span>,):
+    num_topics <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">if</span> author <span style="color:#f92672">in</span> compsci_authors:
+        num_topics <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+        <span style="color:#66d9ef">yield</span> [article_id, <span style="color:#e6db74">&#34;cs&#34;</span>]
+    <span style="color:#66d9ef">if</span> author <span style="color:#f92672">in</span> bio_authors:
+        num_topics <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+        <span style="color:#66d9ef">yield</span> [article_id, <span style="color:#e6db74">&#34;bio&#34;</span>]
+    <span style="color:#66d9ef">elif</span> any (word <span style="color:#66d9ef">for</span> word <span style="color:#f92672">in</span> bio_words <span style="color:#66d9ef">if</span> word <span style="color:#f92672">in</span> words):
+        num_topics <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+        <span style="color:#66d9ef">yield</span> [article_id, <span style="color:#e6db74">&#34;bio&#34;</span>]
+    <span style="color:#66d9ef">if</span> num_topics <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
+        <span style="color:#66d9ef">yield</span> [article_id, <span style="color:#66d9ef">None</span>]
+</code></pre></div>
+		</div>
+		<footer class="post__footer">
+			
+<div class="post__tags tags clearfix">
+	<svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5 0 11V3C0 1.5.8.8.8.8S1.5 0 3 0h8c1.5 0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/nlp/" rel="tag">NLP</a>
+		</li>
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/%E6%96%87%E6%9C%AC%E6%8A%BD%E5%8F%96/" rel="tag">文本抽取</a>
+		</li>
+	</ul>
+</div>
+		</footer>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<div class="authorbox__header">
+		<span class="authorbox__name">About 李勐</span>
+	</div>
+</div>
+
+<nav class="pager flex">
+	<div class="pager__item pager__item--prev">
+		<a class="pager__link" href="/posts/20160818-lda/lda/" rel="prev">
+			<span class="pager__subtitle">«&thinsp;Previous</span>
+			<p class="pager__title">LDA模型入门</p>
+		</a>
+	</div>
+	<div class="pager__item pager__item--next">
+		<a class="pager__link" href="/posts/20170903/snokel/" rel="next">
+			<span class="pager__subtitle">Next&thinsp;»</span>
+			<p class="pager__title">Snorkel学习笔记</p>
+		</a>
+	</div>
+</nav>
+
+
+			</div>
+			
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2021 Limeng&#39;s Github Pages.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+</body>
+</html>

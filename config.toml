@@ -1,0 +1,68 @@
+baseURL = '/'
+publishDir = 'docs/'
+languageCode = 'zh-cn'
+title = "Limeng's Github Pages"
+theme = "mainroad"
+
+paginate = "10"
+disqusShortname = "" # Enable Disqus comments by entering your Disqus shortname
+googleAnalytics = "" # Enable Google Analytics by entering your tracking id
+
+[Author] # Used in authorbox
+  name = "李勐"
+  # bio = "社恐，喜欢瞎折腾"
+  # avatar = ""
+
+[Params]
+  subtitle = ""
+  description = ""
+  copyright = ""
+  opengraph = true
+  schema = true
+  twitter_cards = false # Enable Twitter Cards if true
+  readmore = false      # Show "Read more" button in list if true
+  authorbox = true      # Show authorbox at bottom of pages if true
+  toc = true            # Enable Table of Contents
+  pager = true          # Show pager navigation (prev/next links) at the bottom of pages if true
+  post_meta = ["author", "date", "categories", "translations"]
+  mainSections = ["posts", "blog", "news"]
+  dateformat = "2006-01-02" # Change the format of dates
+  mathjax = true # Enable MathJax
+  # mathjaxPath = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js"
+  # mathjaxConfig = "TeX-AMS-MML_HTMLorMML"
+  # googleFontsLink = "https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700"
+  # customCSS = ["css/custom.css"] # Include custom CSS files
+  # customJS = ["js/custom.js"] # Include custom JS files
+
+[Params.style.vars]
+  # highlightColor = "#e22d30" # Override highlight color
+
+  # Override font-family sets. Secondary font-family set responsible for pre, code, kbd, and samp tags font
+  # Take care of different quotes OR escaping symbols in these params if necessary
+  fontFamilyPrimary = "'Open Sans', Helvetica, Arial, sans-serif"
+  fontFamilySecondary = "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace"
+
+[Params.logo]
+  title = "安全屋"
+  subtitle = "又菜又爱玩"
+
+[Params.thumbnail]
+  visibility = ["list", "posts"] # Control thumbnail visibility
+
+[Params.sidebar]
+  home = "right" # Configure layout for home page
+  list = "left"  # Configure layout for list pages
+  single = false # Configure layout for single pages
+  # Enable widgets in given order
+  widgets = ["recent", "categories", "taglist", "social"]
+  # alternatively "ddg-search" can be used, to search via DuckDuckGo
+  # widgets = ["ddg-search", "recent", "categories", "taglist", "social", "languages"]
+
+[Params.widgets]
+  recent_num = 5 # Set the number of articles in the "Recent articles" widget
+  categories_counter = false # Enable counter for each category in "Categories" widget
+  tags_counter = false # Enable counter for each tag in "Tags" widget
+
+[Params.widgets.social]
+  github = "zhaodaolimeng"
+  email = "找到李勐的全拼 在 gmail.com"

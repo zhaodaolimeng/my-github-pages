@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>文本抽取 on Limeng&#39;s Github Pages</title>
+    <link>/tags/%E6%96%87%E6%9C%AC%E6%8A%BD%E5%8F%96/</link>
+    <description>Recent content in 文本抽取 on Limeng&#39;s Github Pages</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sun, 03 Sep 2017 00:00:00 +0000</lastBuildDate><atom:link href="/tags/%E6%96%87%E6%9C%AC%E6%8A%BD%E5%8F%96/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Snorkel学习笔记</title>
+      <link>/posts/20170903/snokel/</link>
+      <pubDate>Sun, 03 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/20170903/snokel/</guid>
+      <description>1 简介 Snorkel是deepdive的后续项目，当前在github上很活跃。Snorkel将deepdive中的弱监督的思想进一步完善，使用纯python的形式构成了一套完整弱监督学习框架。
+2 安装 由于Snorkel当前还处于开发状态，所以官方的安装教程不能保证在所有机器上都能顺利完成。 官方使用了anaconda作为python支持环境，而这个环境在个人看来存在不少问题（在单位这个win 7机器上异常的慢）。 我直接在一个ubuntu虚拟机内使用了virtualenv和原生python2.7对这套环境进行了安装。
+step 1: 部署python virtualenv
+为了不污染全局python环境，官方推荐使用conda进行虚拟环境管理，这里使用了virtualenv。
+sudo apt install python-pip python-dev essential-utils pip install python-virtualenv cd snorkel virtualenv snorkel_env source snorkel_env/bin/activate 根据官方文档安装依赖，并启用jupyter对应的功能。
+pip install numba pip install --requirement python-package-requirement.txt jupyter nbextension enable --py widgetsnbextension --sys-prefix step 2: 配置对虚拟机jupyter notebook的远程连接
+jupyter notebook规定远程连接jupyter需要密码。 使用以下命令生成密码的md5序列，放置到jupyter的配置文件中（也可以有其他生成密码的方式）。
+jupyter notebook generate-config python -c &amp;#39;from notebook.auth import passwd; print passwd()&amp;#39; vim ~/.jupyter/jupyter_notebook_config.py 修改生成的jupyter配置文件。
+c.NotebookApp.ip = &amp;#39;*&amp;#39; c.NotebookApp.password = u&amp;#39;sha1:bcd259ccf...your hashed password here&amp;#39; c.</description>
+    </item>
+    
+    <item>
+      <title>Deepdive学习笔记</title>
+      <link>/posts/20170826-deepdive/deepdive/</link>
+      <pubDate>Sat, 26 Aug 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/20170826-deepdive/deepdive/</guid>
+      <description>0 简介 deepdive是一个具有语言识别能力的信息抽取工具，可用作KBC系统（Knowledge Base Construction）的内核。 也可以理解为是一种Automatic KBC工具。 由于基于语法分析器构建，所以deepdive可通过各类文本规则实现实体间关系的抽取。 deepdive面向异构、海量数据，所以其中涉及一些增量处理的机制。 PaleoDeepdive是基于deepdive的一个例子，用于推测人、地点、组织之间的关系。
+deepdive的执行过程可以分为：
+ feature extraction probabilistic knowledge engineering statistical inference and learning  系统结构图如下所示： KBC系统中的四个主要概念：
+ Entity Relationship Mention，一段话中提及到某个实体或者关系了 Relation Mention  Deepdive的工作机制分为特征抽取、领域知识集成、监督学习、推理四步。 闲话，Deepdive的作者之一Christopher Re之后创建了一个数据抽取公司Lattice.io，该公司在2017年3月份左右被苹果公司收购，用于改善Siri。
+1 安装 1.1 非官方中文版cn_deepdive 项目与文档地址：
+ cn-deepdive DeepDive_Chinese  使用了中文版本cndeepdive，来自openkg.cn。但这个版本已经老化，安装过程中有很多坑。
+ moreutils无法安装问题。0.58版本失效，直接在deepdive/extern/bundled文件夹下的bundle.conf中禁用了moreutils工具，并在extern/.build中清理了对应的临时文件，之后使用了apt进行了安装。 inference/dimmwitterd.sh中17行对g++版本检测的sed出现了问题，需要按照github上新版修改。 numa.h: No such file or directory，直接安装libnuma-dev  1.2 官方版本 按照官方教程进行配置：
+ln -s articles-1000.tsv.bz2 input/articles.tsv.bz2 在input目录下有大量可用语料。
+deepdive do articles deepdive query &amp;#39;?- articles(&amp;#34;5beb863f-26b1-4c2f-ba64-0c3e93e72162&amp;#34;, content).&amp;#39; \ format=csv | grep -v &amp;#39;^ 使用Stanford CoreNLP对句子进行标注。包含NER、POS等操作。查询特定文档的分析结果：</description>
+    </item>
+    
+  </channel>
+</rss>
