@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ACM on Limeng&#39;s Github Pages</title>
+    <link>/tags/acm/</link>
+    <description>Recent content in ACM on Limeng&#39;s Github Pages</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sat, 01 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="/tags/acm/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>字符串读贴笔记</title>
+      <link>/posts/20221001/acm-strings/</link>
+      <pubDate>Sat, 01 Oct 2022 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/20221001/acm-strings/</guid>
+      <description>此文是oi-wiki中字符串部分的总结。
+1 要点 前缀函数 前缀数组的第i位pi[i]表示s[0...i-1]的首尾两个子串相同，且子串长度为pi[i]。
+前缀数组的递归结构在于，在计算pi[i]时，如果前后两个子串的最后一位j不匹配，并不需要从起始部分重新比较，而是可以利用pi[i]=p[j]直接得到，该式成立的原因在于，0..j和i-j+1..i这两个子串的前后子串四段子串是相等的，导致如果pi[j]满足前缀数组定义，那么第1段与第4段也满足前缀数组定义。
+后缀数组 后缀数组包含两个概念，rk[i]表示以位置i为开端的后缀串在数组中字典序的排位，sa[j]表示字典序排序为j的后缀在数组中的位置。
+后缀数组可通过倍增法快速求得。
+z函数 字符串s的z函数的第i位z[i]是指，第i位开始的子串与原字符串最长的相同前缀的位数。
+KMP自动机 KMP算法可用前缀数组直接实现。对于目标串s和输入串t，只需要计算s+#t的前缀数组的最大元素即可。 但这种方式计算KMP有O(|s|+|t|)的空间开销，可使用自动机将开销缩小为O(|s|)。
+自动机的构建同样可以利用前缀数组的递归结构。
+for (int i = 0; i &amp;lt; n; i++) { for (int c = 0; c &amp;lt; 26; c++) { if (i &amp;gt; 0 &amp;amp;&amp;amp; &amp;#39;a&amp;#39; + c != s[i]) aut[i][c] = aut[pi[i - 1]][c]; // 当前位置失配，利用递归结构向前搜索  else aut[i][c] = i + (&amp;#39;a&amp;#39; + c == s[i]); //当前位置匹配  } } AC自动机 AC自动机是结合了Trie树的多模式匹配的算法。 最简单的情况，使用Trie树进行多模式匹配时需要进行逐字遍历，而AC自动机可以实现对串进行单次遍历实现匹配。 实现的关键点就是找到每个状态下对于所有下个字符的输入的状态转移。</description>
+    </item>
+    
+  </channel>
+</rss>

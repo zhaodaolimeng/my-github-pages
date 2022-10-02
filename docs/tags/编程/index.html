@@ -4,16 +4,16 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>文本抽取 - Limeng&#39;s Github Pages</title>
+	<title>编程 - Limeng&#39;s Github Pages</title>
 	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
 	<meta name="description" content="">
-		<meta property="og:title" content="文本抽取" />
+		<meta property="og:title" content="编程" />
 <meta property="og:description" content="" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="/tags/%E6%96%87%E6%9C%AC%E6%8A%BD%E5%8F%96/" />
+<meta property="og:url" content="/tags/%E7%BC%96%E7%A8%8B/" />
 
 
-		<meta itemprop="name" content="文本抽取">
+		<meta itemprop="name" content="编程">
 <meta itemprop="description" content="">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link rel="dns-prefetch" href="//fonts.googleapis.com">
@@ -22,7 +22,7 @@
 
 	<link rel="stylesheet" href="/css/style.css">
 	
-	<link rel="alternate" type="application/rss+xml" href="/tags/%E6%96%87%E6%9C%AC%E6%8A%BD%E5%8F%96/index.xml" title="Limeng's Github Pages">
+	<link rel="alternate" type="application/rss+xml" href="/tags/%E7%BC%96%E7%A8%8B/index.xml" title="Limeng's Github Pages">
 
 	<link rel="shortcut icon" href="/favicon.ico">
 		
@@ -48,60 +48,33 @@
 			
 <main class="main list" role="main">
 	<header class="main__header">
-		<h1 class="main__title">文本抽取</h1>
+		<h1 class="main__title">编程</h1>
 	</header><article class="list__item post">
 	
 	<header class="list__header">
 		<h2 class="list__title post__title">
-			<a href="/posts/20170903/snokel/" rel="bookmark">
-			Snorkel学习笔记
+			<a href="/posts/20221001/acm-strings/" rel="bookmark">
+			字符串读贴笔记
 			</a>
 		</h2>
 		<div class="list__meta meta"><div class="meta__item-author meta__item">
 	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">李勐</span>
 </div>
 <div class="meta__item-datetime meta__item">
-	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2017-09-03T00:00:00Z">2017-09-03</time></div><div class="meta__item-categories meta__item"><svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg><span class="meta__text"><a class="meta__link" href="/categories/nlp/" rel="category">NLP</a>
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2022-10-01T00:00:00Z">2022-10-01</time></div><div class="meta__item-categories meta__item"><svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg><span class="meta__text"><a class="meta__link" href="/categories/acm/" rel="category">ACM</a>
 	</span>
 </div></div>
 	</header>
 	<div class="content list__excerpt post__content clearfix">
-		1 简介 Snorkel是deepdive的后续项目，当前在github上很活跃。Snorkel将deepdive中的弱监督的思想进一步完善，使用纯python的形式构成了一套完整弱监督学习框架。
-2 安装 由于Snorkel当前还处于开发状态，所以官方的安装教程不能保证在所有机器上都能顺利完成。 官方使用了anaconda作为python支持环境，而这个环境在个人看来存在不少问题（在单位这个win 7机器上异常的慢）。 我直接在一个ubuntu虚拟机内使用了virtualenv和原生python2.7对这套环境进行了安装。
-step 1: 部署python virtualenv
-为了不污染全局python环境，官方推荐使用conda进行虚拟环境管理，这里使用了virtualenv。
-sudo apt install python-pip python-dev essential-utils pip install python-virtualenv cd snorkel virtualenv snorkel_env source snorkel_env/bin/activate 根据官方文档安装依赖，并启用jupyter对应的功能。
-pip install numba pip install --requirement python-package-requirement.txt jupyter nbextension enable --py widgetsnbextension --sys-prefix step 2: 配置对虚拟机jupyter notebook的远程连接
-jupyter notebook规定远程连接jupyter需要密码。 使用以下命令生成密码的md5序列，放置到jupyter的配置文件中（也可以有其他生成密码的方式）。
-jupyter notebook generate-config python -c &#39;from notebook.auth import passwd; print passwd()&#39; vim ~/.jupyter/jupyter_notebook_config.py 修改生成的jupyter配置文件。
-c.NotebookApp.ip = &#39;*&#39; c.NotebookApp.password = u&#39;sha1:bcd259ccf...your hashed password here&#39; c.
-	</div>
-</article><article class="list__item post">
-	
-	<header class="list__header">
-		<h2 class="list__title post__title">
-			<a href="/posts/20170826-deepdive/deepdive/" rel="bookmark">
-			Deepdive学习笔记
-			</a>
-		</h2>
-		<div class="list__meta meta"><div class="meta__item-author meta__item">
-	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">李勐</span>
-</div>
-<div class="meta__item-datetime meta__item">
-	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2017-08-26T00:00:00Z">2017-08-26</time></div><div class="meta__item-categories meta__item"><svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg><span class="meta__text"><a class="meta__link" href="/categories/nlp/" rel="category">NLP</a>
-	</span>
-</div></div>
-	</header>
-	<div class="content list__excerpt post__content clearfix">
-		0 简介 deepdive是一个具有语言识别能力的信息抽取工具，可用作KBC系统（Knowledge Base Construction）的内核。 也可以理解为是一种Automatic KBC工具。 由于基于语法分析器构建，所以deepdive可通过各类文本规则实现实体间关系的抽取。 deepdive面向异构、海量数据，所以其中涉及一些增量处理的机制。 PaleoDeepdive是基于deepdive的一个例子，用于推测人、地点、组织之间的关系。
-deepdive的执行过程可以分为：
- feature extraction probabilistic knowledge engineering statistical inference and learning  系统结构图如下所示： KBC系统中的四个主要概念：
- Entity Relationship Mention，一段话中提及到某个实体或者关系了 Relation Mention  Deepdive的工作机制分为特征抽取、领域知识集成、监督学习、推理四步。 闲话，Deepdive的作者之一Christopher Re之后创建了一个数据抽取公司Lattice.io，该公司在2017年3月份左右被苹果公司收购，用于改善Siri。
-1 安装 1.1 非官方中文版cn_deepdive 项目与文档地址：
- cn-deepdive DeepDive_Chinese  使用了中文版本cndeepdive，来自openkg.cn。但这个版本已经老化，安装过程中有很多坑。
- moreutils无法安装问题。0.58版本失效，直接在deepdive/extern/bundled文件夹下的bundle.conf中禁用了moreutils工具，并在extern/.build中清理了对应的临时文件，之后使用了apt进行了安装。 inference/dimmwitterd.sh中17行对g++版本检测的sed出现了问题，需要按照github上新版修改。 numa.h: No such file or directory，直接安装libnuma-dev  1.2 官方版本 按照官方教程进行配置：
-ln -s articles-1000.tsv.bz2 input/articles.tsv.bz2 在input目录下有大量可用语料。
-deepdive do articles deepdive query &#39;?- articles(&#34;5beb863f-26b1-4c2f-ba64-0c3e93e72162&#34;, content).&#39; \ format=csv | grep -v &#39;^ 使用Stanford CoreNLP对句子进行标注。包含NER、POS等操作。查询特定文档的分析结果：
+		此文是oi-wiki中字符串部分的总结。
+1 要点 前缀函数 前缀数组的第i位pi[i]表示s[0...i-1]的首尾两个子串相同，且子串长度为pi[i]。
+前缀数组的递归结构在于，在计算pi[i]时，如果前后两个子串的最后一位j不匹配，并不需要从起始部分重新比较，而是可以利用pi[i]=p[j]直接得到，该式成立的原因在于，0..j和i-j+1..i这两个子串的前后子串四段子串是相等的，导致如果pi[j]满足前缀数组定义，那么第1段与第4段也满足前缀数组定义。
+后缀数组 后缀数组包含两个概念，rk[i]表示以位置i为开端的后缀串在数组中字典序的排位，sa[j]表示字典序排序为j的后缀在数组中的位置。
+后缀数组可通过倍增法快速求得。
+z函数 字符串s的z函数的第i位z[i]是指，第i位开始的子串与原字符串最长的相同前缀的位数。
+KMP自动机 KMP算法可用前缀数组直接实现。对于目标串s和输入串t，只需要计算s+#t的前缀数组的最大元素即可。 但这种方式计算KMP有O(|s|+|t|)的空间开销，可使用自动机将开销缩小为O(|s|)。
+自动机的构建同样可以利用前缀数组的递归结构。
+for (int i = 0; i &lt; n; i++) { for (int c = 0; c &lt; 26; c++) { if (i &gt; 0 &amp;&amp; &#39;a&#39; + c != s[i]) aut[i][c] = aut[pi[i - 1]][c]; // 当前位置失配，利用递归结构向前搜索  else aut[i][c] = i + (&#39;a&#39; + c == s[i]); //当前位置匹配  } } AC自动机 AC自动机是结合了Trie树的多模式匹配的算法。 最简单的情况，使用Trie树进行多模式匹配时需要进行逐字遍历，而AC自动机可以实现对串进行单次遍历实现匹配。 实现的关键点就是找到每个状态下对于所有下个字符的输入的状态转移。
 	</div>
 </article>
 </main>
