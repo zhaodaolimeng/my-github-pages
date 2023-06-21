@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>动态规划 on Limeng&#39;s Github Pages</title>
+    <link>/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/</link>
+    <description>Recent content in 动态规划 on Limeng&#39;s Github Pages</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sat, 01 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>oi-wiki读贴笔记：动态规划</title>
+      <link>/posts/20221003/acm-dp/</link>
+      <pubDate>Sat, 01 Oct 2022 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/20221003/acm-dp/</guid>
+      <description>此文是oi-wiki中字动态规划部分的总结。
+1 要点 2 题目 2.1 入门 最长升序子序列
+这个题目使用单调队列复杂度为O(nlogn)，关键点在于序队列维护升序串，同时对于一个更小的输入，在队列中找到稍大于它的元素并进行替换。 帖子中表述有问题，队列中大于更小输入的元素不进行删除。</description>
+    </item>
+    
+  </channel>
+</rss>

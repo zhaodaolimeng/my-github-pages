@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>MCMC - Limeng&#39;s Github Pages</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+		<meta property="og:title" content="MCMC" />
+<meta property="og:description" content="The Big Picture 假如你在没有任何统计数据支撑的情况下，想知道中国的人口地理重心，该怎么办？按照MCMC的观点，应该这样：
+ 随便去一个地方\(x_t\)，数一数方圆1公里的人口数量\(\pi(x_t)\) 再以一定概率从\(x_t\)去另一个地方\(x_*\)，数一数人口\(\pi(x_*)\)，但只以一定概率\(\alpha\)保留它 重复以上过程很多次，获得很多个旅行记录 以人口为权重，对这些记录的地理位置进行加权求和  这里前3步即MCMC的过程，最后一步是使用样本点对分布参数进行的估计，其中\(\alpha\)可利用Markov的平稳条件得到。
+Monte Carlo Monte Carlo模拟简称MC。早期的MC都是用来解决一些不太好解决的求和和积分问题，例如，特定概率密度函数下的期望求解任务。例如： $$ \theta=\int_a^bf(x)dx $$
+这个积分如果难解的话可以使用采样多个点的形式来进行估计： $$ \frac{b-a}{n}\sum^{n-1}_{i=0}f(x_i) $$
+同时，如果\(x\)在\([a,b]\)之间不是均匀的，则需要引入一个\(x\)的概率分布\(p(x)\)，原积分表达式可以写为： $$ \theta=\int_a^bf(x)dx=\int_a^b\frac{f(x)}{p(x)}p(x)dx\approx\frac{1}{n}\sum_{i=1}^{n}\frac{f(x_i)}{p(x_i)} $$
+上述即为MC的一般形式。但这里还有一个问题，即如何根据\(p(x)\)获得基于该分布的\(n\)个\(x\)样本，尤其是如果\(p(x)\)的概率分布非常复杂，那么就需要采用别的手段实现\(x\)的采样，一种可行的方式是接受-拒绝采样。
+接受-拒绝采样分为以下步骤：
+ 考虑找到一个方便采样的函数\(q(x)\)，以及一个常量\(k\)，使得\(p(x)\)总在\(kq(x)\)的下方（这里需要进行试算函数\(q(x)\)的具体参数）。 采样\(q(x)\)得到一个样本\(z_1\)。 从均匀分布\((0,kq(z_1))\)中采样得到一个值\(u\)。如果u在图中灰色区域则拒绝样本\(z_1\)，否则则接受。 得到n个接受的样本点为\(z_1,z_2,&hellip;z_n\)。  这样MC的最终结果可表示为： $$ \theta \approx \frac{1}{n}\sum_{i=1}^n \frac{f(z_i)}{p(z_i)} $$
+从上面的接受-拒绝采样看，对于一个复杂的\(p(x)\)，想找到一个合适的\(q(x)\)和常数\(k\)是非常困难的，所以有后续使用Markov链进行采样的方法。
+MCMC 如果能构造一个转移矩阵为P的马氏链，使得马氏链的平稳分布刚好是p(x)，如果马氏链在第n步开始收敛，那么可以获得\(x_n, x_{n&#43;1}, &hellip;\)这些步骤的样本，可作为原始分布的采样。
+马尔科夫链的采样过程如下：
+ 输入马尔科夫链的状态转移矩阵\(P\)，设定状态转移次数阈值\(n_1\)，需要样本数\(n_2\)。 从任意简单概率分布采样得到初始状态值\(x_0\)。 重复\(n_1&#43;n_2\)步，从条件概率分布\(P(x|x_t)\)中采样得到样本\(x_t\)，那么后面\(n_2\)个样本即为平稳分布对应的样本集。  但是，对于一个概率平稳分布\(\pi\)，一般是很难找到对应的马尔科夫链的状态转移矩阵\(P\)的。
+MCMC正是为了应对上面找不到\(P\)的问题。MCMC先随机选择了一个矩阵\(Q\)，显然，它很难满足细致平稳条件，即有\(\pi(i)Q(i,j)\neq\pi(j)Q(j,i)\)。 MCMC对上式进行了简单的改造，引入了一个\(\alpha(i,j)\)函数，使得： $$ \pi(i)Q(i,j)\alpha(i,j)=\pi(j)Q(j,i)\alpha(j,i) $$
+这样，转移矩阵就有了一个新的表示： $$ P(i,j)=Q(i,j)\alpha(i,j) $$
+其中的\(\alpha(i,j)\)非常类似于接受-拒绝采样中的采样条件，所以被成为接受率。
+总的MCMC过程如下：
+ 选定任意一个马尔科夫链状态转移矩阵\(Q\)，平稳分布\(\pi(x)\)，设定状态转移次数阈值\(n_1\)、需要样本个数\(n_2\)。 从任意简单概率分布得到初始状态\(x_0\)。 for t = 1 to \(n_1&#43;n_2\)：  从条件概率分布\(Q(x|x_t)\)中采样得到样本\(x_*\)。 从均匀分布采样\(u\sim\text{uniform}[0,1]\)。 如果\(u&lt;\alpha(x_t,x_*)=\pi(x_*)Q(x_*,x_t)\)，则接受转移\(x_{t&#43;1}=x_*\)，否则不接受转移，即\(x_{t&#43;1}=x_{t}\)。    Metropolis-Hastings又对MCMC在循环的第三步进行了改进，原有\(\alpha_{i,j}\)可能是一个非常小的结果，导致绝大多数采样都被拒绝，马尔科夫链的收敛速度会很慢。具体办法是对循环第三步进行了调整，将\(\alpha(i,j)\)的计算调整为： $$ \alpha(x_t,x_*)=\min \lbrace\frac{\pi(x_*)Q(x_*,x_t)}{\pi(x_t)Q(x_t,x_*)},1\rbrace $$" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/20230321/mcmc/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-03-21T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-03-21T00:00:00+00:00" />
+
+
+		<meta itemprop="name" content="MCMC">
+<meta itemprop="description" content="The Big Picture 假如你在没有任何统计数据支撑的情况下，想知道中国的人口地理重心，该怎么办？按照MCMC的观点，应该这样：
+ 随便去一个地方\(x_t\)，数一数方圆1公里的人口数量\(\pi(x_t)\) 再以一定概率从\(x_t\)去另一个地方\(x_*\)，数一数人口\(\pi(x_*)\)，但只以一定概率\(\alpha\)保留它 重复以上过程很多次，获得很多个旅行记录 以人口为权重，对这些记录的地理位置进行加权求和  这里前3步即MCMC的过程，最后一步是使用样本点对分布参数进行的估计，其中\(\alpha\)可利用Markov的平稳条件得到。
+Monte Carlo Monte Carlo模拟简称MC。早期的MC都是用来解决一些不太好解决的求和和积分问题，例如，特定概率密度函数下的期望求解任务。例如： $$ \theta=\int_a^bf(x)dx $$
+这个积分如果难解的话可以使用采样多个点的形式来进行估计： $$ \frac{b-a}{n}\sum^{n-1}_{i=0}f(x_i) $$
+同时，如果\(x\)在\([a,b]\)之间不是均匀的，则需要引入一个\(x\)的概率分布\(p(x)\)，原积分表达式可以写为： $$ \theta=\int_a^bf(x)dx=\int_a^b\frac{f(x)}{p(x)}p(x)dx\approx\frac{1}{n}\sum_{i=1}^{n}\frac{f(x_i)}{p(x_i)} $$
+上述即为MC的一般形式。但这里还有一个问题，即如何根据\(p(x)\)获得基于该分布的\(n\)个\(x\)样本，尤其是如果\(p(x)\)的概率分布非常复杂，那么就需要采用别的手段实现\(x\)的采样，一种可行的方式是接受-拒绝采样。
+接受-拒绝采样分为以下步骤：
+ 考虑找到一个方便采样的函数\(q(x)\)，以及一个常量\(k\)，使得\(p(x)\)总在\(kq(x)\)的下方（这里需要进行试算函数\(q(x)\)的具体参数）。 采样\(q(x)\)得到一个样本\(z_1\)。 从均匀分布\((0,kq(z_1))\)中采样得到一个值\(u\)。如果u在图中灰色区域则拒绝样本\(z_1\)，否则则接受。 得到n个接受的样本点为\(z_1,z_2,&hellip;z_n\)。  这样MC的最终结果可表示为： $$ \theta \approx \frac{1}{n}\sum_{i=1}^n \frac{f(z_i)}{p(z_i)} $$
+从上面的接受-拒绝采样看，对于一个复杂的\(p(x)\)，想找到一个合适的\(q(x)\)和常数\(k\)是非常困难的，所以有后续使用Markov链进行采样的方法。
+MCMC 如果能构造一个转移矩阵为P的马氏链，使得马氏链的平稳分布刚好是p(x)，如果马氏链在第n步开始收敛，那么可以获得\(x_n, x_{n&#43;1}, &hellip;\)这些步骤的样本，可作为原始分布的采样。
+马尔科夫链的采样过程如下：
+ 输入马尔科夫链的状态转移矩阵\(P\)，设定状态转移次数阈值\(n_1\)，需要样本数\(n_2\)。 从任意简单概率分布采样得到初始状态值\(x_0\)。 重复\(n_1&#43;n_2\)步，从条件概率分布\(P(x|x_t)\)中采样得到样本\(x_t\)，那么后面\(n_2\)个样本即为平稳分布对应的样本集。  但是，对于一个概率平稳分布\(\pi\)，一般是很难找到对应的马尔科夫链的状态转移矩阵\(P\)的。
+MCMC正是为了应对上面找不到\(P\)的问题。MCMC先随机选择了一个矩阵\(Q\)，显然，它很难满足细致平稳条件，即有\(\pi(i)Q(i,j)\neq\pi(j)Q(j,i)\)。 MCMC对上式进行了简单的改造，引入了一个\(\alpha(i,j)\)函数，使得： $$ \pi(i)Q(i,j)\alpha(i,j)=\pi(j)Q(j,i)\alpha(j,i) $$
+这样，转移矩阵就有了一个新的表示： $$ P(i,j)=Q(i,j)\alpha(i,j) $$
+其中的\(\alpha(i,j)\)非常类似于接受-拒绝采样中的采样条件，所以被成为接受率。
+总的MCMC过程如下：
+ 选定任意一个马尔科夫链状态转移矩阵\(Q\)，平稳分布\(\pi(x)\)，设定状态转移次数阈值\(n_1\)、需要样本个数\(n_2\)。 从任意简单概率分布得到初始状态\(x_0\)。 for t = 1 to \(n_1&#43;n_2\)：  从条件概率分布\(Q(x|x_t)\)中采样得到样本\(x_*\)。 从均匀分布采样\(u\sim\text{uniform}[0,1]\)。 如果\(u&lt;\alpha(x_t,x_*)=\pi(x_*)Q(x_*,x_t)\)，则接受转移\(x_{t&#43;1}=x_*\)，否则不接受转移，即\(x_{t&#43;1}=x_{t}\)。    Metropolis-Hastings又对MCMC在循环的第三步进行了改进，原有\(\alpha_{i,j}\)可能是一个非常小的结果，导致绝大多数采样都被拒绝，马尔科夫链的收敛速度会很慢。具体办法是对循环第三步进行了调整，将\(\alpha(i,j)\)的计算调整为： $$ \alpha(x_t,x_*)=\min \lbrace\frac{\pi(x_*)Q(x_*,x_t)}{\pi(x_t)Q(x_t,x_*)},1\rbrace $$"><meta itemprop="datePublished" content="2023-03-21T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2023-03-21T00:00:00+00:00" />
+<meta itemprop="wordCount" content="74">
+<meta itemprop="keywords" content="数学,随机,统计," />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+
+	<link rel="stylesheet" href="/css/style.css">
+	
+
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo">
+		<a class="logo__link" href="/" title="老学徒" rel="home">
+			<div class="logo__item logo__text">
+					<div class="logo__title">老学徒</div>
+					<div class="logo__tagline">Never too old to learn</div>
+				</div>
+		</a>
+	</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">MCMC</h1>
+			<div class="post__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">李勐</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2023-03-21T00:00:00Z">2023-03-21</time></div><div class="meta__item-categories meta__item"><svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg><span class="meta__text"><a class="meta__link" href="/categories/%E6%95%B0%E5%AD%A6/" rel="category">数学</a>
+	</span>
+</div></div>
+		</header>
+		<div class="content post__content clearfix">
+			<h1 id="the-big-picture">The Big Picture</h1>
+<p>假如你在没有任何统计数据支撑的情况下，想知道中国的人口地理重心，该怎么办？按照MCMC的观点，应该这样：</p>
+<ul>
+<li>随便去一个地方\(x_t\)，数一数方圆1公里的人口数量\(\pi(x_t)\)</li>
+<li>再以一定概率从\(x_t\)去另一个地方\(x_*\)，数一数人口\(\pi(x_*)\)，但只以一定概率\(\alpha\)保留它</li>
+<li>重复以上过程很多次，获得很多个旅行记录</li>
+<li>以人口为权重，对这些记录的地理位置进行加权求和</li>
+</ul>
+<p>这里前3步即MCMC的过程，最后一步是使用样本点对分布参数进行的估计，其中\(\alpha\)可利用Markov的平稳条件得到。</p>
+<h1 id="monte-carlo">Monte Carlo</h1>
+<p>Monte Carlo模拟简称MC。早期的MC都是用来解决一些不太好解决的求和和积分问题，例如，特定概率密度函数下的期望求解任务。例如：
+$$
+\theta=\int_a^bf(x)dx
+$$</p>
+<p>这个积分如果难解的话可以使用采样多个点的形式来进行估计：
+$$
+\frac{b-a}{n}\sum^{n-1}_{i=0}f(x_i)
+$$</p>
+<p>同时，如果\(x\)在\([a,b]\)之间不是均匀的，则需要引入一个\(x\)的概率分布\(p(x)\)，原积分表达式可以写为：
+$$
+\theta=\int_a^bf(x)dx=\int_a^b\frac{f(x)}{p(x)}p(x)dx\approx\frac{1}{n}\sum_{i=1}^{n}\frac{f(x_i)}{p(x_i)}
+$$</p>
+<p>上述即为MC的一般形式。但这里还有一个问题，即如何根据\(p(x)\)获得基于该分布的\(n\)个\(x\)样本，尤其是如果\(p(x)\)的概率分布非常复杂，那么就需要采用别的手段实现\(x\)的采样，一种可行的方式是接受-拒绝采样。</p>
+<p><img src="./../assets/accept-reject-sample.png" alt="img"></p>
+<p>接受-拒绝采样分为以下步骤：</p>
+<ol>
+<li>考虑找到一个方便采样的函数\(q(x)\)，以及一个常量\(k\)，使得\(p(x)\)总在\(kq(x)\)的下方（这里需要进行试算函数\(q(x)\)的具体参数）。</li>
+<li>采样\(q(x)\)得到一个样本\(z_1\)。</li>
+<li>从均匀分布\((0,kq(z_1))\)中采样得到一个值\(u\)。如果u在图中灰色区域则拒绝样本\(z_1\)，否则则接受。</li>
+<li>得到n个接受的样本点为\(z_1,z_2,&hellip;z_n\)。</li>
+</ol>
+<p>这样MC的最终结果可表示为：
+$$
+\theta \approx \frac{1}{n}\sum_{i=1}^n \frac{f(z_i)}{p(z_i)}
+$$</p>
+<p>从上面的接受-拒绝采样看，对于一个复杂的\(p(x)\)，想找到一个合适的\(q(x)\)和常数\(k\)是非常困难的，所以有后续使用Markov链进行采样的方法。</p>
+<h1 id="mcmc">MCMC</h1>
+<p>如果能构造一个转移矩阵为P的马氏链，使得马氏链的平稳分布刚好是p(x)，如果马氏链在第n步开始收敛，那么可以获得\(x_n, x_{n+1}, &hellip;\)这些步骤的样本，可作为原始分布的采样。</p>
+<p>马尔科夫链的采样过程如下：</p>
+<ol>
+<li>输入马尔科夫链的状态转移矩阵\(P\)，设定状态转移次数阈值\(n_1\)，需要样本数\(n_2\)。</li>
+<li>从任意简单概率分布采样得到初始状态值\(x_0\)。</li>
+<li>重复\(n_1+n_2\)步，从条件概率分布\(P(x|x_t)\)中采样得到样本\(x_t\)，那么后面\(n_2\)个样本即为平稳分布对应的样本集。</li>
+</ol>
+<p>但是，对于一个概率平稳分布\(\pi\)，一般是很难找到对应的马尔科夫链的状态转移矩阵\(P\)的。</p>
+<p>MCMC正是为了应对上面找不到\(P\)的问题。MCMC先随机选择了一个矩阵\(Q\)，显然，它很难满足细致平稳条件，即有\(\pi(i)Q(i,j)\neq\pi(j)Q(j,i)\)。
+MCMC对上式进行了简单的改造，引入了一个\(\alpha(i,j)\)函数，使得：
+$$
+\pi(i)Q(i,j)\alpha(i,j)=\pi(j)Q(j,i)\alpha(j,i)
+$$</p>
+<p>这样，转移矩阵就有了一个新的表示：
+$$
+P(i,j)=Q(i,j)\alpha(i,j)
+$$</p>
+<p>其中的\(\alpha(i,j)\)非常类似于接受-拒绝采样中的采样条件，所以被成为接受率。</p>
+<p>总的MCMC过程如下：</p>
+<ol>
+<li>选定任意一个马尔科夫链状态转移矩阵\(Q\)，平稳分布\(\pi(x)\)，设定状态转移次数阈值\(n_1\)、需要样本个数\(n_2\)。</li>
+<li>从任意简单概率分布得到初始状态\(x_0\)。</li>
+<li>for t = 1 to \(n_1+n_2\)：
+<ol>
+<li>从条件概率分布\(Q(x|x_t)\)中采样得到样本\(x_*\)。</li>
+<li>从均匀分布采样\(u\sim\text{uniform}[0,1]\)。</li>
+<li>如果\(u&lt;\alpha(x_t,x_*)=\pi(x_*)Q(x_*,x_t)\)，则接受转移\(x_{t+1}=x_*\)，否则不接受转移，即\(x_{t+1}=x_{t}\)。</li>
+</ol>
+</li>
+</ol>
+<p>Metropolis-Hastings又对MCMC在循环的第三步进行了改进，原有\(\alpha_{i,j}\)可能是一个非常小的结果，导致绝大多数采样都被拒绝，马尔科夫链的收敛速度会很慢。具体办法是对循环第三步进行了调整，将\(\alpha(i,j)\)的计算调整为：
+$$
+\alpha(x_t,x_*)=\min \lbrace\frac{\pi(x_*)Q(x_*,x_t)}{\pi(x_t)Q(x_t,x_*)},1\rbrace
+$$</p>
+
+		</div>
+		<footer class="post__footer">
+			
+<div class="post__tags tags clearfix">
+	<svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5 0 11V3C0 1.5.8.8.8.8S1.5 0 3 0h8c1.5 0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/%E6%95%B0%E5%AD%A6/" rel="tag">数学</a>
+		</li>
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/%E9%9A%8F%E6%9C%BA/" rel="tag">随机</a>
+		</li>
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/%E7%BB%9F%E8%AE%A1/" rel="tag">统计</a>
+		</li>
+	</ul>
+</div>
+		</footer>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<div class="authorbox__header">
+		<span class="authorbox__name">About 李勐</span>
+	</div>
+</div>
+
+<nav class="pager flex">
+	<div class="pager__item pager__item--prev">
+		<a class="pager__link" href="/posts/20221003/acm-dp/" rel="prev">
+			<span class="pager__subtitle">«&thinsp;Previous</span>
+			<p class="pager__title">oi-wiki读贴笔记：动态规划</p>
+		</a>
+	</div>
+</nav>
+
+
+			</div>
+			
+		</div>
+		<footer class="footer">
+	<script src="https://utteranc.es/client.js"
+		repo="zhaodaolimeng/my-github-pages"
+		issue-term="pathname"
+		theme="github-light"
+		crossorigin="anonymous"
+		async>
+	</script>
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2023 Limeng&#39;s Github Pages.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+</body>
+</html>

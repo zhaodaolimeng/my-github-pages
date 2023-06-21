@@ -8,7 +8,18 @@
     <language>zh-cn</language>
     <lastBuildDate>Sat, 01 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="/categories/acm/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>字符串读贴笔记</title>
+      <title>oi-wiki读贴笔记：动态规划</title>
+      <link>/posts/20221003/acm-dp/</link>
+      <pubDate>Sat, 01 Oct 2022 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/20221003/acm-dp/</guid>
+      <description>此文是oi-wiki中字动态规划部分的总结。
+1 要点 2 题目 2.1 入门 最长升序子序列
+这个题目使用单调队列复杂度为O(nlogn)，关键点在于序队列维护升序串，同时对于一个更小的输入，在队列中找到稍大于它的元素并进行替换。 帖子中表述有问题，队列中大于更小输入的元素不进行删除。</description>
+    </item>
+    
+    <item>
+      <title>oi-wiki读贴笔记：字符串</title>
       <link>/posts/20221001/acm-strings/</link>
       <pubDate>Sat, 01 Oct 2022 00:00:00 +0000</pubDate>
       

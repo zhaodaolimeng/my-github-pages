@@ -4,10 +4,10 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>字符串读贴笔记 - Limeng&#39;s Github Pages</title>
+	<title>oi-wiki读贴笔记：字符串 - Limeng&#39;s Github Pages</title>
 	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
 	<meta name="description" content="">
-		<meta property="og:title" content="字符串读贴笔记" />
+		<meta property="og:title" content="oi-wiki读贴笔记：字符串" />
 <meta property="og:description" content="此文是oi-wiki中字符串部分的总结。
 1 要点 前缀函数 前缀数组的第i位pi[i]表示s[0...i-1]的首尾两个子串相同，且子串长度为pi[i]。
 前缀数组的递归结构在于，在计算pi[i]时，如果前后两个子串的最后一位j不匹配，并不需要从起始部分重新比较，而是可以利用pi[i]=p[j]直接得到，该式成立的原因在于，0..j和i-j&#43;1..i这两个子串的前后子串四段子串是相等的，导致如果pi[j]满足前缀数组定义，那么第1段与第4段也满足前缀数组定义。
@@ -23,7 +23,7 @@ for (int i = 0; i &lt; n; i&#43;&#43;) { for (int c = 0; c &lt; 26; c&#43;&#43;)
 <meta property="article:modified_time" content="2022-10-01T00:00:00+00:00" />
 
 
-		<meta itemprop="name" content="字符串读贴笔记">
+		<meta itemprop="name" content="oi-wiki读贴笔记：字符串">
 <meta itemprop="description" content="此文是oi-wiki中字符串部分的总结。
 1 要点 前缀函数 前缀数组的第i位pi[i]表示s[0...i-1]的首尾两个子串相同，且子串长度为pi[i]。
 前缀数组的递归结构在于，在计算pi[i]时，如果前后两个子串的最后一位j不匹配，并不需要从起始部分重新比较，而是可以利用pi[i]=p[j]直接得到，该式成立的原因在于，0..j和i-j&#43;1..i这两个子串的前后子串四段子串是相等的，导致如果pi[j]满足前缀数组定义，那么第1段与第4段也满足前缀数组定义。
@@ -53,10 +53,10 @@ for (int i = 0; i &lt; n; i&#43;&#43;) { for (int c = 0; c &lt; 26; c&#43;&#43;)
 	<div class="container header__container">
 		
 	<div class="logo">
-		<a class="logo__link" href="/" title="安全屋" rel="home">
+		<a class="logo__link" href="/" title="老学徒" rel="home">
 			<div class="logo__item logo__text">
-					<div class="logo__title">安全屋</div>
-					<div class="logo__tagline">又菜又爱玩</div>
+					<div class="logo__title">老学徒</div>
+					<div class="logo__tagline">Never too old to learn</div>
 				</div>
 		</a>
 	</div>
@@ -69,7 +69,7 @@ for (int i = 0; i &lt; n; i&#43;&#43;) { for (int c = 0; c &lt; 26; c&#43;&#43;)
 <main class="main" role="main">
 	<article class="post">
 		<header class="post__header">
-			<h1 class="post__title">字符串读贴笔记</h1>
+			<h1 class="post__title">oi-wiki读贴笔记：字符串</h1>
 			<div class="post__meta meta"><div class="meta__item-author meta__item">
 	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">李勐</span>
 </div>
@@ -170,6 +170,12 @@ for (int i = 0; i &lt; n; i&#43;&#43;) { for (int c = 0; c &lt; 26; c&#43;&#43;)
 			<p class="pager__title">Snorkel学习笔记</p>
 		</a>
 	</div>
+	<div class="pager__item pager__item--next">
+		<a class="pager__link" href="/posts/20221003/acm-dp/" rel="next">
+			<span class="pager__subtitle">Next&thinsp;»</span>
+			<p class="pager__title">oi-wiki读贴笔记：动态规划</p>
+		</a>
+	</div>
 </nav>
 
 
@@ -187,7 +193,7 @@ for (int i = 0; i &lt; n; i&#43;&#43;) { for (int c = 0; c &lt; 26; c&#43;&#43;)
 	<div class="container footer__container flex">
 		
 		<div class="footer__copyright">
-			&copy; 2022 Limeng&#39;s Github Pages.
+			&copy; 2023 Limeng&#39;s Github Pages.
 			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
 		</div>
 	</div>

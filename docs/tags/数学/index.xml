@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>数学 on Limeng&#39;s Github Pages</title>
+    <link>/tags/%E6%95%B0%E5%AD%A6/</link>
+    <description>Recent content in 数学 on Limeng&#39;s Github Pages</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Tue, 21 Mar 2023 00:00:00 +0000</lastBuildDate><atom:link href="/tags/%E6%95%B0%E5%AD%A6/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MCMC</title>
+      <link>/posts/20230321/mcmc/</link>
+      <pubDate>Tue, 21 Mar 2023 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/20230321/mcmc/</guid>
+      <description>The Big Picture 假如你在没有任何统计数据支撑的情况下，想知道中国的人口地理重心，该怎么办？按照MCMC的观点，应该这样：
+ 随便去一个地方\(x_t\)，数一数方圆1公里的人口数量\(\pi(x_t)\) 再以一定概率从\(x_t\)去另一个地方\(x_*\)，数一数人口\(\pi(x_*)\)，但只以一定概率\(\alpha\)保留它 重复以上过程很多次，获得很多个旅行记录 以人口为权重，对这些记录的地理位置进行加权求和  这里前3步即MCMC的过程，最后一步是使用样本点对分布参数进行的估计，其中\(\alpha\)可利用Markov的平稳条件得到。
+Monte Carlo Monte Carlo模拟简称MC。早期的MC都是用来解决一些不太好解决的求和和积分问题，例如，特定概率密度函数下的期望求解任务。例如： $$ \theta=\int_a^bf(x)dx $$
+这个积分如果难解的话可以使用采样多个点的形式来进行估计： $$ \frac{b-a}{n}\sum^{n-1}_{i=0}f(x_i) $$
+同时，如果\(x\)在\([a,b]\)之间不是均匀的，则需要引入一个\(x\)的概率分布\(p(x)\)，原积分表达式可以写为： $$ \theta=\int_a^bf(x)dx=\int_a^b\frac{f(x)}{p(x)}p(x)dx\approx\frac{1}{n}\sum_{i=1}^{n}\frac{f(x_i)}{p(x_i)} $$
+上述即为MC的一般形式。但这里还有一个问题，即如何根据\(p(x)\)获得基于该分布的\(n\)个\(x\)样本，尤其是如果\(p(x)\)的概率分布非常复杂，那么就需要采用别的手段实现\(x\)的采样，一种可行的方式是接受-拒绝采样。
+接受-拒绝采样分为以下步骤：
+ 考虑找到一个方便采样的函数\(q(x)\)，以及一个常量\(k\)，使得\(p(x)\)总在\(kq(x)\)的下方（这里需要进行试算函数\(q(x)\)的具体参数）。 采样\(q(x)\)得到一个样本\(z_1\)。 从均匀分布\((0,kq(z_1))\)中采样得到一个值\(u\)。如果u在图中灰色区域则拒绝样本\(z_1\)，否则则接受。 得到n个接受的样本点为\(z_1,z_2,&amp;hellip;z_n\)。  这样MC的最终结果可表示为： $$ \theta \approx \frac{1}{n}\sum_{i=1}^n \frac{f(z_i)}{p(z_i)} $$
+从上面的接受-拒绝采样看，对于一个复杂的\(p(x)\)，想找到一个合适的\(q(x)\)和常数\(k\)是非常困难的，所以有后续使用Markov链进行采样的方法。
+MCMC 如果能构造一个转移矩阵为P的马氏链，使得马氏链的平稳分布刚好是p(x)，如果马氏链在第n步开始收敛，那么可以获得\(x_n, x_{n+1}, &amp;hellip;\)这些步骤的样本，可作为原始分布的采样。
+马尔科夫链的采样过程如下：
+ 输入马尔科夫链的状态转移矩阵\(P\)，设定状态转移次数阈值\(n_1\)，需要样本数\(n_2\)。 从任意简单概率分布采样得到初始状态值\(x_0\)。 重复\(n_1+n_2\)步，从条件概率分布\(P(x|x_t)\)中采样得到样本\(x_t\)，那么后面\(n_2\)个样本即为平稳分布对应的样本集。  但是，对于一个概率平稳分布\(\pi\)，一般是很难找到对应的马尔科夫链的状态转移矩阵\(P\)的。
+MCMC正是为了应对上面找不到\(P\)的问题。MCMC先随机选择了一个矩阵\(Q\)，显然，它很难满足细致平稳条件，即有\(\pi(i)Q(i,j)\neq\pi(j)Q(j,i)\)。 MCMC对上式进行了简单的改造，引入了一个\(\alpha(i,j)\)函数，使得： $$ \pi(i)Q(i,j)\alpha(i,j)=\pi(j)Q(j,i)\alpha(j,i) $$
+这样，转移矩阵就有了一个新的表示： $$ P(i,j)=Q(i,j)\alpha(i,j) $$
+其中的\(\alpha(i,j)\)非常类似于接受-拒绝采样中的采样条件，所以被成为接受率。
+总的MCMC过程如下：
+ 选定任意一个马尔科夫链状态转移矩阵\(Q\)，平稳分布\(\pi(x)\)，设定状态转移次数阈值\(n_1\)、需要样本个数\(n_2\)。 从任意简单概率分布得到初始状态\(x_0\)。 for t = 1 to \(n_1+n_2\)：  从条件概率分布\(Q(x|x_t)\)中采样得到样本\(x_*\)。 从均匀分布采样\(u\sim\text{uniform}[0,1]\)。 如果\(u&amp;lt;\alpha(x_t,x_*)=\pi(x_*)Q(x_*,x_t)\)，则接受转移\(x_{t+1}=x_*\)，否则不接受转移，即\(x_{t+1}=x_{t}\)。    Metropolis-Hastings又对MCMC在循环的第三步进行了改进，原有\(\alpha_{i,j}\)可能是一个非常小的结果，导致绝大多数采样都被拒绝，马尔科夫链的收敛速度会很慢。具体办法是对循环第三步进行了调整，将\(\alpha(i,j)\)的计算调整为： $$ \alpha(x_t,x_*)=\min \lbrace\frac{\pi(x_*)Q(x_*,x_t)}{\pi(x_t)Q(x_t,x_*)},1\rbrace $$</description>
+    </item>
+    
+  </channel>
+</rss>

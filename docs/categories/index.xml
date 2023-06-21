@@ -6,7 +6,16 @@
     <description>Recent content in Categories on Limeng&#39;s Github Pages</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 01 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 21 Mar 2023 00:00:00 +0000</lastBuildDate><atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>数学</title>
+      <link>/categories/%E6%95%B0%E5%AD%A6/</link>
+      <pubDate>Tue, 21 Mar 2023 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/%E6%95%B0%E5%AD%A6/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>ACM</title>
       <link>/categories/acm/</link>
