@@ -43,8 +43,8 @@ googleAnalytics = "" # Enable Google Analytics by entering your tracking id
   fontFamilySecondary = "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace"
 
 [Params.logo]
-  title = "安全屋"
-  subtitle = "又菜又爱玩"
+  title = "老学徒"
+  subtitle = "Never too old to learn"
 
 [Params.thumbnail]
   visibility = ["list", "posts"] # Control thumbnail visibility

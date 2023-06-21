@@ -1,5 +1,5 @@
 ---
-title: "字符串读贴笔记"
+title: "oi-wiki读贴笔记：字符串"
 date: 2022-10-01
 categories:
     - "ACM"
