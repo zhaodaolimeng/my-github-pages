@@ -1,5 +1,5 @@
 ---
-title: "tensorflow常用技巧"
+title: "tensorflow常用模板"
 date: 2023-07-19
 categories:
     - "coding"
@@ -159,10 +159,8 @@ def create_generator(raw_input, seq_len=512):
         rider_arrived_lng, rider_arrived_lat = int(df[5]), int(df[6])
         poi_lng, poi_lat = int(df[7]), int(df[8])
         usr_lng, usr_lat = int(df[9]), int(df[10])
-        feat_names = [
-            't', 'lat', 'lng', 'v', 'acc', 'provider',
-            'dt', 'dlat', 'dlng', 'nearby',
-            'rec_dist', 'poi_dist', 'rider_fetch_dist', 'rider_arrived_dist']
+        feat_names = ['t', 'lat', 'lng', ]
+        
         elements = {fn: [] for fn in feat_names}
         provider_map = {'gps': 0.0, 'iOS': 1.0, 'network': 2.0, 'fail': 3.0}
         ts_idx, pre_t, pre_lat, pre_lng = 1, 0, 0, 0
@@ -176,26 +174,8 @@ def create_generator(raw_input, seq_len=512):
             elements['t'].append(float(p[0]))
             elements['lat'].append(float(p[1]))
             elements['lng'].append(float(p[2]))
-            elements['dt'].append(float(p[0]) - pre_t)
-            elements['dlat'].append(float(p[1]) - pre_lat)
-            elements['dlng'].append(float(p[2]) - pre_lng)
-            elements['v'].append(float(p[3]))
-            elements['acc'].append(float(p[4]))
-            elements['provider'].append(provider_map[p[5]] if p[5] in provider_map else 3.0)
-            pre_t, pre_lat, pre_lng = float(p[0]), float(p[1]), float(p[2])
-
-            # gps每个时刻对于其他送达时刻的最短时间差
-            t = float(p[0])
-            while t > checkpoints[ts_idx]:
-                ts_idx += 1
-            elements['nearby'].append(min(abs(t - checkpoints[ts_idx - 1]), abs(t - checkpoints[ts_idx])))
-
-            # gps相对用骑商收货距离
-            lat, lng = int(p[1]), int(p[2])
-            elements['rec_dist'].append(calc_dist(lat, lng, usr_lat, usr_lng))
-            elements['poi_dist'].append(calc_dist(lat, lng, poi_lat, poi_lng))
-            elements['rider_fetch_dist'].append(calc_dist(lat, lng, rider_fetch_lat, rider_fetch_lat))
-            elements['rider_arrived_dist'].append(calc_dist(lat, lng, rider_arrived_lat, rider_arrived_lng))
+            # some fancy transformation
+            # ...
 
         ret = [elements[t] for t in feat_names]
 

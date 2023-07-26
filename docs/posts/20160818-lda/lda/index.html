@@ -21,7 +21,6 @@
 <meta property="article:published_time" content="2016-08-18T00:00:00+00:00" />
 <meta property="article:modified_time" content="2016-08-18T00:00:00+00:00" />
 
-
 		<meta itemprop="name" content="LDA模型入门">
 <meta itemprop="description" content="1 引子 本文是对Blei等人LDA原始论文的总结。给定大量的文档，如何在无标注的情况下确定每个文档的主题词？LDA(Latent Dirichlet Allocation)是这类主题确定问题的一个成熟的解决方案。LDA最初面向文本挖掘领域，但随后在图像分类、行为识别等领域也得到了应用。LDA是一种典型的非监督模型，模型仅需要输入文档集合的词袋模型，模型可输出每个文档对应的主题，每个主题使用关键词的分布来表示。
 2 模型定义 LDA的PGM形式如上，我们认为主题数目有K个，文档有M个， 每个文档中有N个词。其中，\(\alpha\) 是Dirichlet分布的参数，大小为1xK，用于控制生成主题的聚集程度； \(\theta\) 表示一个文档中主题的分布大小为1xK；\(z\)为一个为每个词安排主题的01随机变量，大小为1xK，且只有一个值为1；\(\beta\)为一个多项分布的集合，大小为KxV，其中每一行代表一个主题中，不同词出现的概率；而w代表每个文档中的一个词。
@@ -163,13 +162,6 @@ $$ = \frac{\Gamma(\sum_i\alpha_i)}{\prod_i{\Gamma(\alpha_i)}}\int(\prod_{i=1}^k\
 			
 		</div>
 		<footer class="footer">
-	<script src="https://utteranc.es/client.js"
-		repo="zhaodaolimeng/my-github-pages"
-		issue-term="pathname"
-		theme="github-light"
-		crossorigin="anonymous"
-		async>
-	</script>
 	<div class="container footer__container flex">
 		
 		<div class="footer__copyright">

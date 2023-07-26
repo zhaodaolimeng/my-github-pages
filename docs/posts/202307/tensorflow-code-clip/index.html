@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>tensorflow常用模板 - Limeng&#39;s Github Pages</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+		<meta property="og:title" content="tensorflow常用模板" />
+<meta property="og:description" content="本文记录如何使用tensorflow实现基于transformer的轨迹分类。
+在技术实现上包含以下关键细节需要注意：
+轨迹点如果超出模型序列长度则进行中间截断，如果不足则进行中间补0 轨迹数据需要对单条数据进行归一化 只使用transformer的encoder部分进行建模，不使用embedding或positional embedding机制，这种方式工程实现简单，但模型可能无法捕获序列前后的区域信息 代码实现 首先实现transformer encoder，内部结构为self-attention和feed forward网络。
+def scaled_dot_product_attention(q, k, v, mask=None): matmul_qk = tf.matmul(q, k, transpose_b=True) # (..., seq_len_q, seq_len_k) dk = tf.cast(tf.shape(k)[-1], tf.float32) scaled_attention_logits = matmul_qk / tf.math.sqrt(dk) if mask is not None: scaled_attention_logits &#43;= (mask * -1e9) attention_weights = tf.nn.softmax(scaled_attention_logits, axis=-1) # (..., seq_len_q, seq_len_k) output = tf.matmul(attention_weights, v) # (..., seq_len_q, depth_v) return output, attention_weights class MultiHeadAttention(tf.keras.layers.Layer): def __init__(self, d_model, num_heads, dropout): super(MultiHeadAttention, self)." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/202307/tensorflow-code-clip/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-07-19T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-07-19T00:00:00+00:00" />
+
+		<meta itemprop="name" content="tensorflow常用模板">
+<meta itemprop="description" content="本文记录如何使用tensorflow实现基于transformer的轨迹分类。
+在技术实现上包含以下关键细节需要注意：
+轨迹点如果超出模型序列长度则进行中间截断，如果不足则进行中间补0 轨迹数据需要对单条数据进行归一化 只使用transformer的encoder部分进行建模，不使用embedding或positional embedding机制，这种方式工程实现简单，但模型可能无法捕获序列前后的区域信息 代码实现 首先实现transformer encoder，内部结构为self-attention和feed forward网络。
+def scaled_dot_product_attention(q, k, v, mask=None): matmul_qk = tf.matmul(q, k, transpose_b=True) # (..., seq_len_q, seq_len_k) dk = tf.cast(tf.shape(k)[-1], tf.float32) scaled_attention_logits = matmul_qk / tf.math.sqrt(dk) if mask is not None: scaled_attention_logits &#43;= (mask * -1e9) attention_weights = tf.nn.softmax(scaled_attention_logits, axis=-1) # (..., seq_len_q, seq_len_k) output = tf.matmul(attention_weights, v) # (..., seq_len_q, depth_v) return output, attention_weights class MultiHeadAttention(tf.keras.layers.Layer): def __init__(self, d_model, num_heads, dropout): super(MultiHeadAttention, self)."><meta itemprop="datePublished" content="2023-07-19T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2023-07-19T00:00:00+00:00" />
+<meta itemprop="wordCount" content="777">
+<meta itemprop="keywords" content="DNN,tensorflow,transformer,trajectory,framework," />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+
+	<link rel="stylesheet" href="/css/style.css">
+	
+
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo">
+		<a class="logo__link" href="/" title="老学徒" rel="home">
+			<div class="logo__item logo__text">
+					<div class="logo__title">老学徒</div>
+					<div class="logo__tagline">Never too old to learn</div>
+				</div>
+		</a>
+	</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">tensorflow常用模板</h1>
+			<div class="post__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">李勐</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2023-07-19T00:00:00Z">2023-07-19</time></div><div class="meta__item-categories meta__item"><svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg><span class="meta__text"><a class="meta__link" href="/categories/coding/" rel="category">coding</a>
+	</span>
+</div></div>
+		</header>
+		<div class="content post__content clearfix">
+			<p>本文记录如何使用tensorflow实现基于transformer的轨迹分类。</p>
+<p>在技术实现上包含以下关键细节需要注意：</p>
+<ul>
+<li>轨迹点如果超出模型序列长度则进行中间截断，如果不足则进行中间补0</li>
+<li>轨迹数据需要对单条数据进行归一化</li>
+<li>只使用transformer的encoder部分进行建模，不使用embedding或positional embedding机制，这种方式工程实现简单，但模型可能无法捕获序列前后的区域信息</li>
+</ul>
+<h1 id="代码实现">代码实现</h1>
+<p>首先实现transformer encoder，内部结构为self-attention和feed forward网络。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">scaled_dot_product_attention</span>(q, k, v, mask<span style="color:#f92672">=</span><span style="color:#66d9ef">None</span>):
+</span></span><span style="display:flex;"><span>    matmul_qk <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>matmul(q, k, transpose_b<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)  <span style="color:#75715e"># (..., seq_len_q, seq_len_k)</span>
+</span></span><span style="display:flex;"><span>    dk <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>cast(tf<span style="color:#f92672">.</span>shape(k)[<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>], tf<span style="color:#f92672">.</span>float32)
+</span></span><span style="display:flex;"><span>    scaled_attention_logits <span style="color:#f92672">=</span> matmul_qk <span style="color:#f92672">/</span> tf<span style="color:#f92672">.</span>math<span style="color:#f92672">.</span>sqrt(dk)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> mask <span style="color:#f92672">is</span> <span style="color:#f92672">not</span> <span style="color:#66d9ef">None</span>:
+</span></span><span style="display:flex;"><span>        scaled_attention_logits <span style="color:#f92672">+=</span> (mask <span style="color:#f92672">*</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1e9</span>)
+</span></span><span style="display:flex;"><span>    attention_weights <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>nn<span style="color:#f92672">.</span>softmax(scaled_attention_logits, axis<span style="color:#f92672">=-</span><span style="color:#ae81ff">1</span>)  <span style="color:#75715e"># (..., seq_len_q, seq_len_k)</span>
+</span></span><span style="display:flex;"><span>    output <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>matmul(attention_weights, v)  <span style="color:#75715e"># (..., seq_len_q, depth_v)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> output, attention_weights
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MultiHeadAttention</span>(tf<span style="color:#f92672">.</span>keras<span style="color:#f92672">.</span>layers<span style="color:#f92672">.</span>Layer):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __init__(self, d_model, num_heads, dropout):
+</span></span><span style="display:flex;"><span>        super(MultiHeadAttention, self)<span style="color:#f92672">.</span>__init__()
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>num_heads <span style="color:#f92672">=</span> num_heads
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>d_model <span style="color:#f92672">=</span> d_model
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">assert</span> d_model <span style="color:#f92672">%</span> self<span style="color:#f92672">.</span>num_heads <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>depth <span style="color:#f92672">=</span> d_model <span style="color:#f92672">//</span> self<span style="color:#f92672">.</span>num_heads
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>wq <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>keras<span style="color:#f92672">.</span>layers<span style="color:#f92672">.</span>Dense(d_model)
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>wk <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>keras<span style="color:#f92672">.</span>layers<span style="color:#f92672">.</span>Dense(d_model)
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>wv <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>keras<span style="color:#f92672">.</span>layers<span style="color:#f92672">.</span>Dense(d_model)
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>dropout <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>keras<span style="color:#f92672">.</span>layers<span style="color:#f92672">.</span>Dropout(dropout)
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>dense <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>keras<span style="color:#f92672">.</span>layers<span style="color:#f92672">.</span>Dense(d_model)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">split_heads</span>(self, x, batch_size):
+</span></span><span style="display:flex;"><span>        x <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>reshape(x, (batch_size, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, self<span style="color:#f92672">.</span>num_heads, self<span style="color:#f92672">.</span>depth))
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> tf<span style="color:#f92672">.</span>transpose(x, perm<span style="color:#f92672">=</span>[<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">3</span>])
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">call</span>(self, v, k, q, mask<span style="color:#f92672">=</span><span style="color:#66d9ef">None</span>):
+</span></span><span style="display:flex;"><span>        batch_size <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>shape(q)[<span style="color:#ae81ff">0</span>]
+</span></span><span style="display:flex;"><span>        q <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>wq(q)  <span style="color:#75715e"># (batch_size, seq_len, d_model)</span>
+</span></span><span style="display:flex;"><span>        k <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>wk(k)  <span style="color:#75715e"># (batch_size, seq_len, d_model)</span>
+</span></span><span style="display:flex;"><span>        v <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>wv(v)  <span style="color:#75715e"># (batch_size, seq_len, d_model)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        q <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>split_heads(q, batch_size)  <span style="color:#75715e"># (batch_size, num_heads, seq_len_q, depth)</span>
+</span></span><span style="display:flex;"><span>        k <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>split_heads(k, batch_size)  <span style="color:#75715e"># (batch_size, num_heads, seq_len_k, depth)</span>
+</span></span><span style="display:flex;"><span>        v <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>split_heads(v, batch_size)  <span style="color:#75715e"># (batch_size, num_heads, seq_len_v, depth)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># scaled_attention.shape == (batch_size, num_heads, seq_len_q, depth)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># attention_weights.shape == (batch_size, num_heads, seq_len_q, seq_len_k)</span>
+</span></span><span style="display:flex;"><span>        scaled_attention, attention_weights <span style="color:#f92672">=</span> scaled_dot_product_attention(q, k, v, mask)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        scaled_attention <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>transpose(scaled_attention, perm<span style="color:#f92672">=</span>[<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">3</span>])
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># (batch_size, seq_len_q, num_heads, depth)</span>
+</span></span><span style="display:flex;"><span>        concat_attention <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>reshape(scaled_attention,  (batch_size, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, self<span style="color:#f92672">.</span>d_model))
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># (batch_size, seq_len_q, d_model)</span>
+</span></span><span style="display:flex;"><span>        concat_attention <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>dropout(concat_attention)
+</span></span><span style="display:flex;"><span>        output <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>dense(concat_attention)  <span style="color:#75715e"># (batch_size, seq_len_q, d_model)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> output, attention_weights
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">GlobalSelfAttention</span>(tf<span style="color:#f92672">.</span>keras<span style="color:#f92672">.</span>layers<span style="color:#f92672">.</span>Layer):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __init__(self, <span style="color:#f92672">**</span>kwargs):
+</span></span><span style="display:flex;"><span>        super()<span style="color:#f92672">.</span>__init__()
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>mha <span style="color:#f92672">=</span> MultiHeadAttention(<span style="color:#f92672">**</span>kwargs)
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>layernorm <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>keras<span style="color:#f92672">.</span>layers<span style="color:#f92672">.</span>LayerNormalization()
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>add <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>keras<span style="color:#f92672">.</span>layers<span style="color:#f92672">.</span>Add()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">call</span>(self, x):
+</span></span><span style="display:flex;"><span>        attn_output, attention <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>mha(x, k<span style="color:#f92672">=</span>x, q<span style="color:#f92672">=</span>x, mask<span style="color:#f92672">=</span><span style="color:#66d9ef">None</span>)
+</span></span><span style="display:flex;"><span>        x <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>add([x, attn_output])
+</span></span><span style="display:flex;"><span>        x <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>layernorm(x)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> x
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">EncoderLayer</span>(tf<span style="color:#f92672">.</span>keras<span style="color:#f92672">.</span>layers<span style="color:#f92672">.</span>Layer):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __init__(self, <span style="color:#f92672">*</span>, d_model, num_heads, dff, dropout_rate<span style="color:#f92672">=</span><span style="color:#ae81ff">0.1</span>):
+</span></span><span style="display:flex;"><span>        super()<span style="color:#f92672">.</span>__init__()
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>self_attention <span style="color:#f92672">=</span> GlobalSelfAttention(d_model<span style="color:#f92672">=</span>d_model, num_heads<span style="color:#f92672">=</span>num_heads, dropout<span style="color:#f92672">=</span>dropout_rate)
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>ffn <span style="color:#f92672">=</span> FeedForward(d_model, dff)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">call</span>(self, x):
+</span></span><span style="display:flex;"><span>        x <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>self_attention(x)
+</span></span><span style="display:flex;"><span>        x <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>ffn(x)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> x
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FeedForward</span>(tf<span style="color:#f92672">.</span>keras<span style="color:#f92672">.</span>layers<span style="color:#f92672">.</span>Layer):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __init__(self, d_model, dff, dropout_rate<span style="color:#f92672">=</span><span style="color:#ae81ff">0.1</span>):
+</span></span><span style="display:flex;"><span>        super()<span style="color:#f92672">.</span>__init__()
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>seq <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>keras<span style="color:#f92672">.</span>Sequential([
+</span></span><span style="display:flex;"><span>            tf<span style="color:#f92672">.</span>keras<span style="color:#f92672">.</span>layers<span style="color:#f92672">.</span>Dense(dff, activation<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;relu&#39;</span>),
+</span></span><span style="display:flex;"><span>            tf<span style="color:#f92672">.</span>keras<span style="color:#f92672">.</span>layers<span style="color:#f92672">.</span>Dense(d_model),
+</span></span><span style="display:flex;"><span>            tf<span style="color:#f92672">.</span>keras<span style="color:#f92672">.</span>layers<span style="color:#f92672">.</span>Dropout(dropout_rate)
+</span></span><span style="display:flex;"><span>        ])
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>add <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>keras<span style="color:#f92672">.</span>layers<span style="color:#f92672">.</span>Add()
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>layer_norm <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>keras<span style="color:#f92672">.</span>layers<span style="color:#f92672">.</span>LayerNormalization()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">call</span>(self, x):
+</span></span><span style="display:flex;"><span>        x <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>add([x, self<span style="color:#f92672">.</span>seq(x)])
+</span></span><span style="display:flex;"><span>        x <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>layer_norm(x)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> x
+</span></span></code></pre></div><p>gps数据中包含“经度、纬度、时间戳”三元素，需要按照时间戳排序之后将一组gps数据合并为一条记录。原始数据从hive中取出。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>sdf_gps<span style="color:#f92672">.</span>withColumn(
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;gps&#39;</span>
+</span></span><span style="display:flex;"><span>    ,F<span style="color:#f92672">.</span>concat(
+</span></span><span style="display:flex;"><span>        col(<span style="color:#e6db74">&#39;t&#39;</span>),lit(<span style="color:#e6db74">&#39;,&#39;</span>)
+</span></span><span style="display:flex;"><span>        ,col(<span style="color:#e6db74">&#39;lat&#39;</span>),lit(<span style="color:#e6db74">&#39;,&#39;</span>),col(<span style="color:#e6db74">&#39;lng&#39;</span>),lit(<span style="color:#e6db74">&#39;,&#39;</span>)
+</span></span><span style="display:flex;"><span>        ,col(<span style="color:#e6db74">&#39;v&#39;</span>),lit(<span style="color:#e6db74">&#39;,&#39;</span>),col(<span style="color:#e6db74">&#39;acc&#39;</span>),lit(<span style="color:#e6db74">&#39;,&#39;</span>),col(<span style="color:#e6db74">&#39;provider&#39;</span>)))\
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">.</span>groupBy(<span style="color:#e6db74">&#39;order_id&#39;</span>,<span style="color:#e6db74">&#39;dt&#39;</span>,<span style="color:#e6db74">&#39;label&#39;</span>)\
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">.</span>agg(F<span style="color:#f92672">.</span>sort_array(F<span style="color:#f92672">.</span>collect_list(F<span style="color:#f92672">.</span>struct(<span style="color:#e6db74">&#39;t&#39;</span>,<span style="color:#e6db74">&#39;gps&#39;</span>)))<span style="color:#f92672">.</span>alias(<span style="color:#e6db74">&#39;collected&#39;</span>))\
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">.</span>withColumn(<span style="color:#e6db74">&#39;gps_sorted&#39;</span>,F<span style="color:#f92672">.</span>col(<span style="color:#e6db74">&#39;collected.gps&#39;</span>))<span style="color:#f92672">.</span>drop(<span style="color:#e6db74">&#34;collected&#34;</span>)\
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">.</span>withColumn(<span style="color:#e6db74">&#39;gps_sorted&#39;</span>,F<span style="color:#f92672">.</span>concat_ws(<span style="color:#e6db74">&#39;+&#39;</span>,F<span style="color:#f92672">.</span>col(<span style="color:#e6db74">&#39;gps_sorted&#39;</span>)))\
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">.</span>write<span style="color:#f92672">.</span>mode(<span style="color:#e6db74">&#39;overwrite&#39;</span>)<span style="color:#f92672">.</span>saveAsTable(target_table)
+</span></span></code></pre></div><p>可以使用python生成器的形式定义主句转换，从而实现数据的模型输入。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">create_generator</span>(raw_input, seq_len<span style="color:#f92672">=</span><span style="color:#ae81ff">512</span>):
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">calc_dist</span>(lat_a, lng_a, lat_b, lng_b):
+</span></span><span style="display:flex;"><span>        distance <span style="color:#f92672">=</span> <span style="color:#ae81ff">999999999</span>
+</span></span><span style="display:flex;"><span>        pi <span style="color:#f92672">=</span> math<span style="color:#f92672">.</span>pi
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> lat_a <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">or</span> lng_a <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">or</span> lat_b <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">or</span> lng_b <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> distance
+</span></span><span style="display:flex;"><span>        ra <span style="color:#f92672">=</span> <span style="color:#ae81ff">6378138</span>
+</span></span><span style="display:flex;"><span>        c1 <span style="color:#f92672">=</span> math<span style="color:#f92672">.</span>pow(math<span style="color:#f92672">.</span>sin((lat_a <span style="color:#f92672">/</span> float(<span style="color:#ae81ff">1000000</span>) <span style="color:#f92672">*</span> pi <span style="color:#f92672">/</span> <span style="color:#ae81ff">180</span> <span style="color:#f92672">-</span> lat_b <span style="color:#f92672">/</span> float(<span style="color:#ae81ff">1000000</span>) <span style="color:#f92672">*</span> pi <span style="color:#f92672">/</span> <span style="color:#ae81ff">180</span>) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>), <span style="color:#ae81ff">2</span>)
+</span></span><span style="display:flex;"><span>        c2 <span style="color:#f92672">=</span> math<span style="color:#f92672">.</span>pow(math<span style="color:#f92672">.</span>sin((lng_a <span style="color:#f92672">/</span> float(<span style="color:#ae81ff">1000000</span>) <span style="color:#f92672">*</span> pi <span style="color:#f92672">/</span> <span style="color:#ae81ff">180</span> <span style="color:#f92672">-</span> lng_b <span style="color:#f92672">/</span> float(<span style="color:#ae81ff">1000000</span>) <span style="color:#f92672">*</span> pi <span style="color:#f92672">/</span> <span style="color:#ae81ff">180</span>) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>), <span style="color:#ae81ff">2</span>)
+</span></span><span style="display:flex;"><span>        x1 <span style="color:#f92672">=</span> math<span style="color:#f92672">.</span>cos(lat_a <span style="color:#f92672">/</span> float(<span style="color:#ae81ff">1000000</span>) <span style="color:#f92672">*</span> pi <span style="color:#f92672">/</span> <span style="color:#ae81ff">180</span>)
+</span></span><span style="display:flex;"><span>        x2 <span style="color:#f92672">=</span> math<span style="color:#f92672">.</span>cos(lat_b <span style="color:#f92672">/</span> float(<span style="color:#ae81ff">1000000</span>) <span style="color:#f92672">*</span> pi <span style="color:#f92672">/</span> <span style="color:#ae81ff">180</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>            distance <span style="color:#f92672">=</span> round(ra <span style="color:#f92672">*</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> math<span style="color:#f92672">.</span>asin(math<span style="color:#f92672">.</span>sqrt(c1 <span style="color:#f92672">+</span> x1 <span style="color:#f92672">*</span> x2 <span style="color:#f92672">*</span> c2)))
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">except</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">pass</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> int(distance)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">process</span>(df):
+</span></span><span style="display:flex;"><span>        gps_timeline, order_timeline <span style="color:#f92672">=</span> df[<span style="color:#ae81ff">13</span>], df[<span style="color:#ae81ff">14</span>]
+</span></span><span style="display:flex;"><span>        rider_fetch_lng, rider_fetch_lat <span style="color:#f92672">=</span> int(df[<span style="color:#ae81ff">3</span>]), int(df[<span style="color:#ae81ff">4</span>])
+</span></span><span style="display:flex;"><span>        rider_arrived_lng, rider_arrived_lat <span style="color:#f92672">=</span> int(df[<span style="color:#ae81ff">5</span>]), int(df[<span style="color:#ae81ff">6</span>])
+</span></span><span style="display:flex;"><span>        poi_lng, poi_lat <span style="color:#f92672">=</span> int(df[<span style="color:#ae81ff">7</span>]), int(df[<span style="color:#ae81ff">8</span>])
+</span></span><span style="display:flex;"><span>        usr_lng, usr_lat <span style="color:#f92672">=</span> int(df[<span style="color:#ae81ff">9</span>]), int(df[<span style="color:#ae81ff">10</span>])
+</span></span><span style="display:flex;"><span>        feat_names <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#39;t&#39;</span>, <span style="color:#e6db74">&#39;lat&#39;</span>, <span style="color:#e6db74">&#39;lng&#39;</span>, ]
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        elements <span style="color:#f92672">=</span> {fn: [] <span style="color:#66d9ef">for</span> fn <span style="color:#f92672">in</span> feat_names}
+</span></span><span style="display:flex;"><span>        provider_map <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#39;gps&#39;</span>: <span style="color:#ae81ff">0.0</span>, <span style="color:#e6db74">&#39;iOS&#39;</span>: <span style="color:#ae81ff">1.0</span>, <span style="color:#e6db74">&#39;network&#39;</span>: <span style="color:#ae81ff">2.0</span>, <span style="color:#e6db74">&#39;fail&#39;</span>: <span style="color:#ae81ff">3.0</span>}
+</span></span><span style="display:flex;"><span>        ts_idx, pre_t, pre_lat, pre_lng <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>        checkpoints <span style="color:#f92672">=</span> [<span style="color:#f92672">-</span>math<span style="color:#f92672">.</span>inf] <span style="color:#f92672">+</span> [float(v) <span style="color:#66d9ef">for</span> v <span style="color:#f92672">in</span> order_timeline<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#39;,&#39;</span>)] <span style="color:#f92672">+</span> [math<span style="color:#f92672">.</span>inf]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> idx, point <span style="color:#f92672">in</span> enumerate(gps_timeline<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#39;+&#39;</span>)):
+</span></span><span style="display:flex;"><span>            p <span style="color:#f92672">=</span> point<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#39;,&#39;</span>)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> idx <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>                pre_t, pre_lat, pre_lng <span style="color:#f92672">=</span> float(p[<span style="color:#ae81ff">0</span>]), float(p[<span style="color:#ae81ff">1</span>]), float(p[<span style="color:#ae81ff">2</span>])
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            elements[<span style="color:#e6db74">&#39;t&#39;</span>]<span style="color:#f92672">.</span>append(float(p[<span style="color:#ae81ff">0</span>]))
+</span></span><span style="display:flex;"><span>            elements[<span style="color:#e6db74">&#39;lat&#39;</span>]<span style="color:#f92672">.</span>append(float(p[<span style="color:#ae81ff">1</span>]))
+</span></span><span style="display:flex;"><span>            elements[<span style="color:#e6db74">&#39;lng&#39;</span>]<span style="color:#f92672">.</span>append(float(p[<span style="color:#ae81ff">2</span>]))
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># some fancy transformation</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># ...</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        ret <span style="color:#f92672">=</span> [elements[t] <span style="color:#66d9ef">for</span> t <span style="color:#f92672">in</span> feat_names]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># 数据归一化</span>
+</span></span><span style="display:flex;"><span>        a <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>vstack(ret)
+</span></span><span style="display:flex;"><span>        a_min <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>transpose(np<span style="color:#f92672">.</span>tile(np<span style="color:#f92672">.</span>min(a, axis<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>), (a<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">1</span>], <span style="color:#ae81ff">1</span>)))
+</span></span><span style="display:flex;"><span>        a_max <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>transpose(np<span style="color:#f92672">.</span>tile(np<span style="color:#f92672">.</span>max(a, axis<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>), (a<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">1</span>], <span style="color:#ae81ff">1</span>)))
+</span></span><span style="display:flex;"><span>        b <span style="color:#f92672">=</span> ((a <span style="color:#f92672">-</span> a_min <span style="color:#f92672">+</span> <span style="color:#ae81ff">0.01</span>) <span style="color:#f92672">/</span> (a_max <span style="color:#f92672">-</span> a_min <span style="color:#f92672">+</span> <span style="color:#ae81ff">0.01</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># 截断padding</span>
+</span></span><span style="display:flex;"><span>        l <span style="color:#f92672">=</span> b[:, :int((min(seq_len, b<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">1</span>]) <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>)]
+</span></span><span style="display:flex;"><span>        r <span style="color:#f92672">=</span> b[:, b<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">-</span> int((min(seq_len, b<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">1</span>]) <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>) <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>:]
+</span></span><span style="display:flex;"><span>        b_concat <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>concatenate((l, np<span style="color:#f92672">.</span>zeros([b<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">0</span>], max(<span style="color:#ae81ff">0</span>, seq_len <span style="color:#f92672">-</span> l<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">-</span> r<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">1</span>])]), r), axis<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> np<span style="color:#f92672">.</span>transpose(b_concat)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">data_generator</span>():
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> row <span style="color:#f92672">in</span> raw_input:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">yield</span> process(row), int(row[<span style="color:#ae81ff">12</span>])
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> data_generator
+</span></span></code></pre></div><p>模型训练主体。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TraceEncoderNetwork</span>(keras<span style="color:#f92672">.</span>Model):
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __init__(self, num_layers, d_model, num_heads, dff, dropout_rate<span style="color:#f92672">=</span><span style="color:#ae81ff">0.1</span>):
+</span></span><span style="display:flex;"><span>        super()<span style="color:#f92672">.</span>__init__()
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>num_layers <span style="color:#f92672">=</span> num_layers
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>enc_layers <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>            EncoderLayer(d_model<span style="color:#f92672">=</span>d_model, num_heads<span style="color:#f92672">=</span>num_heads, dff<span style="color:#f92672">=</span>dff, dropout_rate<span style="color:#f92672">=</span>dropout_rate)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> _ <span style="color:#f92672">in</span> range(num_layers)]
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>flatten <span style="color:#f92672">=</span> layers<span style="color:#f92672">.</span>Flatten()
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>logit <span style="color:#f92672">=</span> layers<span style="color:#f92672">.</span>Dense(<span style="color:#ae81ff">1</span>, activation<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;sigmoid&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">call</span>(self, x):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(self<span style="color:#f92672">.</span>num_layers):
+</span></span><span style="display:flex;"><span>            x <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>enc_layers[i](x)
+</span></span><span style="display:flex;"><span>        x <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>flatten(x)
+</span></span><span style="display:flex;"><span>        x <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>logit(x)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> x
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>batch_size <span style="color:#f92672">=</span> <span style="color:#ae81ff">16</span>
+</span></span><span style="display:flex;"><span>seq_len <span style="color:#f92672">=</span> <span style="color:#ae81ff">512</span>
+</span></span><span style="display:flex;"><span>feature_size <span style="color:#f92672">=</span> <span style="color:#ae81ff">14</span>
+</span></span><span style="display:flex;"><span>num_layers <span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>num_heads <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>dff <span style="color:#f92672">=</span> <span style="color:#ae81ff">256</span>
+</span></span><span style="display:flex;"><span>dropout_rate <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.01</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>df <span style="color:#f92672">=</span> pd<span style="color:#f92672">.</span>read_csv(<span style="color:#e6db74">&#39;trace.tsv&#39;</span>,sep<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\t</span><span style="color:#e6db74">&#39;</span>)
+</span></span><span style="display:flex;"><span>gen <span style="color:#f92672">=</span> create_generator(df<span style="color:#f92672">.</span>to_numpy(), seq_len<span style="color:#f92672">=</span>seq_len)
+</span></span><span style="display:flex;"><span>ds <span style="color:#f92672">=</span> tf<span style="color:#f92672">.</span>data<span style="color:#f92672">.</span>Dataset<span style="color:#f92672">.</span>from_generator(
+</span></span><span style="display:flex;"><span>    gen, output_types<span style="color:#f92672">=</span>(tf<span style="color:#f92672">.</span>float32, tf<span style="color:#f92672">.</span>int32), output_shapes<span style="color:#f92672">=</span>((seq_len, feature_size), ()))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ds_train <span style="color:#f92672">=</span> ds<span style="color:#f92672">.</span>take(int(df<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">*</span><span style="color:#ae81ff">0.9</span>))
+</span></span><span style="display:flex;"><span>ds_test <span style="color:#f92672">=</span> ds<span style="color:#f92672">.</span>skip(int(df<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">*</span><span style="color:#ae81ff">0.9</span>))
+</span></span><span style="display:flex;"><span>ds_train <span style="color:#f92672">=</span> ds_train<span style="color:#f92672">.</span>repeat()<span style="color:#f92672">.</span>shuffle(buffer_size<span style="color:#f92672">=</span><span style="color:#ae81ff">50</span>)<span style="color:#f92672">.</span>batch(batch_size)
+</span></span><span style="display:flex;"><span>ds_test <span style="color:#f92672">=</span> ds_test<span style="color:#f92672">.</span>repeat()<span style="color:#f92672">.</span>shuffle(buffer_size<span style="color:#f92672">=</span><span style="color:#ae81ff">50</span>)<span style="color:#f92672">.</span>batch(batch_size)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>inputs <span style="color:#f92672">=</span> layers<span style="color:#f92672">.</span>Input(shape<span style="color:#f92672">=</span>(seq_len, feature_size))
+</span></span><span style="display:flex;"><span>outputs <span style="color:#f92672">=</span> TraceEncoderNetwork(num_layers, feature_size, num_heads, dff, dropout_rate)(inputs)
+</span></span><span style="display:flex;"><span>model <span style="color:#f92672">=</span> Model(inputs<span style="color:#f92672">=</span>[inputs], outputs<span style="color:#f92672">=</span>[outputs])
+</span></span><span style="display:flex;"><span>model<span style="color:#f92672">.</span>summary()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>model<span style="color:#f92672">.</span>compile(
+</span></span><span style="display:flex;"><span>    optimizer<span style="color:#f92672">=</span>keras<span style="color:#f92672">.</span>optimizers<span style="color:#f92672">.</span>Adam(learning_rate<span style="color:#f92672">=</span><span style="color:#ae81ff">0.0003</span>),
+</span></span><span style="display:flex;"><span>    loss<span style="color:#f92672">=</span>keras<span style="color:#f92672">.</span>losses<span style="color:#f92672">.</span>BinaryCrossentropy(),
+</span></span><span style="display:flex;"><span>    metrics<span style="color:#f92672">=</span>[tf<span style="color:#f92672">.</span>keras<span style="color:#f92672">.</span>metrics<span style="color:#f92672">.</span>AUC()],
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>model<span style="color:#f92672">.</span>fit(ds_train, epochs<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>, validation_data<span style="color:#f92672">=</span>ds_test, validation_steps<span style="color:#f92672">=</span><span style="color:#ae81ff">100</span>, steps_per_epoch<span style="color:#f92672">=</span><span style="color:#ae81ff">1000</span>)
+</span></span><span style="display:flex;"><span>model<span style="color:#f92672">.</span>save_weights(path_output <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;model&#39;</span>)
+</span></span></code></pre></div><h1 id="参考代码">参考代码</h1>
+<p><a href="https://stackoverflow.com/questions/67342988/verifying-the-implementation-of-multihead-attention-in-transformer">Verifying the implementation of Multihead Attention in Transformer</a></p>
+
+		</div>
+		<footer class="post__footer">
+			
+<div class="post__tags tags clearfix">
+	<svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5 0 11V3C0 1.5.8.8.8.8S1.5 0 3 0h8c1.5 0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/dnn/" rel="tag">DNN</a>
+		</li>
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/tensorflow/" rel="tag">tensorflow</a>
+		</li>
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/transformer/" rel="tag">transformer</a>
+		</li>
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/trajectory/" rel="tag">trajectory</a>
+		</li>
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/framework/" rel="tag">framework</a>
+		</li>
+	</ul>
+</div>
+		</footer>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<div class="authorbox__header">
+		<span class="authorbox__name">About 李勐</span>
+	</div>
+</div>
+
+<nav class="pager flex">
+	<div class="pager__item pager__item--prev">
+		<a class="pager__link" href="/posts/20230321/mcmc/" rel="prev">
+			<span class="pager__subtitle">«&thinsp;Previous</span>
+			<p class="pager__title">MCMC</p>
+		</a>
+	</div>
+</nav>
+
+
+			</div>
+			
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2023 Limeng&#39;s Github Pages.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+</body>
+</html>

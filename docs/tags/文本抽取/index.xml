@@ -32,11 +32,11 @@ c.NotebookApp.ip = &amp;#39;*&amp;#39; c.NotebookApp.password = u&amp;#39;sha1:b
       <guid>/posts/20170826-deepdive/deepdive/</guid>
       <description>0 简介 deepdive是一个具有语言识别能力的信息抽取工具，可用作KBC系统（Knowledge Base Construction）的内核。 也可以理解为是一种Automatic KBC工具。 由于基于语法分析器构建，所以deepdive可通过各类文本规则实现实体间关系的抽取。 deepdive面向异构、海量数据，所以其中涉及一些增量处理的机制。 PaleoDeepdive是基于deepdive的一个例子，用于推测人、地点、组织之间的关系。
 deepdive的执行过程可以分为：
- feature extraction probabilistic knowledge engineering statistical inference and learning  系统结构图如下所示： KBC系统中的四个主要概念：
- Entity Relationship Mention，一段话中提及到某个实体或者关系了 Relation Mention  Deepdive的工作机制分为特征抽取、领域知识集成、监督学习、推理四步。 闲话，Deepdive的作者之一Christopher Re之后创建了一个数据抽取公司Lattice.io，该公司在2017年3月份左右被苹果公司收购，用于改善Siri。
+feature extraction probabilistic knowledge engineering statistical inference and learning 系统结构图如下所示： KBC系统中的四个主要概念：
+Entity Relationship Mention，一段话中提及到某个实体或者关系了 Relation Mention Deepdive的工作机制分为特征抽取、领域知识集成、监督学习、推理四步。 闲话，Deepdive的作者之一Christopher Re之后创建了一个数据抽取公司Lattice.io，该公司在2017年3月份左右被苹果公司收购，用于改善Siri。
 1 安装 1.1 非官方中文版cn_deepdive 项目与文档地址：
- cn-deepdive DeepDive_Chinese  使用了中文版本cndeepdive，来自openkg.cn。但这个版本已经老化，安装过程中有很多坑。
- moreutils无法安装问题。0.58版本失效，直接在deepdive/extern/bundled文件夹下的bundle.conf中禁用了moreutils工具，并在extern/.build中清理了对应的临时文件，之后使用了apt进行了安装。 inference/dimmwitterd.sh中17行对g++版本检测的sed出现了问题，需要按照github上新版修改。 numa.h: No such file or directory，直接安装libnuma-dev  1.2 官方版本 按照官方教程进行配置：
+cn-deepdive DeepDive_Chinese 使用了中文版本cndeepdive，来自openkg.cn。但这个版本已经老化，安装过程中有很多坑。
+moreutils无法安装问题。0.58版本失效，直接在deepdive/extern/bundled文件夹下的bundle.conf中禁用了moreutils工具，并在extern/.build中清理了对应的临时文件，之后使用了apt进行了安装。 inference/dimmwitterd.sh中17行对g++版本检测的sed出现了问题，需要按照github上新版修改。 numa.h: No such file or directory，直接安装libnuma-dev 1.2 官方版本 按照官方教程进行配置：
 ln -s articles-1000.tsv.bz2 input/articles.tsv.bz2 在input目录下有大量可用语料。
 deepdive do articles deepdive query &amp;#39;?- articles(&amp;#34;5beb863f-26b1-4c2f-ba64-0c3e93e72162&amp;#34;, content).&amp;#39; \ format=csv | grep -v &amp;#39;^ 使用Stanford CoreNLP对句子进行标注。包含NER、POS等操作。查询特定文档的分析结果：</description>
     </item>

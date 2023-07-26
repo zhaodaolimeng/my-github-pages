@@ -4,6 +4,8 @@
 
 Step 1：本地预览
 ```
+git submodule init
+git submodule update
 hugo server --verbose -D
 ```
 
