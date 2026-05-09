@@ -1,0 +1,16 @@
+<footer class="footer">
+	<script src="https://utteranc.es/client.js"
+		repo="zhaodaolimeng/my-github-pages"
+		issue-term="pathname"
+		theme="github-light"
+		crossorigin="anonymous"
+		async>
+	</script>
+	<div class="container footer__container flex">
+		{{ partial "footer_links.html" . }}
+		<div class="footer__copyright">
+			&copy; {{ now.Format "2006" }} {{ .Site.Params.copyright | default .Site.Title }}.
+			<span class="footer__copyright-credits">{{ T "footer_credits" | safeHTML }}</span>
+		</div>
+	</div>
+</footer>
